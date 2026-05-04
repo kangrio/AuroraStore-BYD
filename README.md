@@ -1,3 +1,9 @@
+# Aurora Store (BYD Variant)
+
+> ⚠️ This is a modified version of Aurora Store for BYD head units.
+
+👉 See full BYD details here: [README-BYD.md](README-BYD.md)
+
 # Aurora Store
 
 Aurora Store enables you to search and download apps from the official Google Play store. You can check app descriptions, screenshots, updates, reviews, and download the APK directly from Google Play to your device. 
