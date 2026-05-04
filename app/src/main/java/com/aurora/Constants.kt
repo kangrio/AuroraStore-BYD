@@ -74,4 +74,5 @@ object Constants {
     const val FLAVOUR_VANILLA = "vanilla"
     const val FLAVOUR_HUAWEI = "huawei"
     const val FLAVOUR_PRELOAD = "preload"
+    const val FLAVOUR_BYD = "byd"
 }

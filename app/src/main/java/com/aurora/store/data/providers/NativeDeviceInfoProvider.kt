@@ -25,6 +25,7 @@ import android.os.Build
 import androidx.core.content.getSystemService
 import com.aurora.extensions.isHuawei
 import java.util.Properties
+import com.aurora.store.util.Preferences
 
 object NativeDeviceInfoProvider {
 
@@ -109,6 +110,8 @@ object NativeDeviceInfoProvider {
         }
 
         if (isHuawei && !isExport) stripHuaweiProperties(properties)
+        if (Preferences.getBoolean(context, "pref_spoof_automotive_property", false)) stripAutomotiveProperties(properties)
+
         return properties
     }
 
@@ -137,6 +140,14 @@ object NativeDeviceInfoProvider {
         properties["Build.MANUFACTURER"] = "Google"
         properties["Build.PRODUCT"] = "lynx"
         properties["Build.ID"] = "TQ2A.230505.002"
+        return properties
+    }
+
+    private fun stripAutomotiveProperties(properties: Properties) : Properties {
+        val sharedLibraries = properties.getProperty("Features")
+        if (sharedLibraries.contains("android.hardware.type.automotive")) return properties
+
+        properties["Features"] = "$sharedLibraries,android.hardware.type.automotive"
         return properties
     }
 }

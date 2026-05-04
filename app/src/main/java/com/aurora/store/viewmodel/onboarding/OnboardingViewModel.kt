@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.aurora.Constants.FLAVOUR_BYD
 import com.aurora.Constants.FLAVOUR_HUAWEI
 import com.aurora.Constants.PACKAGE_NAME_GMS
 import com.aurora.Constants.PACKAGE_NAME_PLAY_STORE
@@ -85,6 +86,13 @@ class OnboardingViewModel @Inject constructor(
         if (BuildConfig.FLAVOR == FLAVOUR_HUAWEI) {
             blacklistProvider.blacklist(PACKAGE_NAME_GMS)
             blacklistProvider.blacklist(PACKAGE_NAME_PLAY_STORE)
+        }
+
+        if (BuildConfig.FLAVOR == FLAVOUR_BYD) {
+            blacklistProvider.blacklist(PACKAGE_NAME_GMS)
+            blacklistProvider.blacklist(PACKAGE_NAME_PLAY_STORE)
+            context.save(PREFERENCE_UPDATES_EXTENDED, true)
+            context.save(PREFERENCE_FILTER_AURORA_ONLY, true)
         }
 
         setupAutoUpdates()

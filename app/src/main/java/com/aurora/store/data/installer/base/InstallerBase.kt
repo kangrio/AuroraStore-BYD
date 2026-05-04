@@ -37,6 +37,8 @@ import com.aurora.store.util.PathUtil
 import com.aurora.store.util.Preferences
 import com.aurora.store.util.Preferences.PREFERENCE_AUTO_DELETE
 import java.io.File
+import com.aurora.Constants
+import com.aurora.store.util.Patcher
 
 abstract class InstallerBase(private val context: Context) : IInstaller {
 
@@ -129,7 +131,10 @@ abstract class InstallerBase(private val context: Context) : IInstaller {
         } else {
             PathUtil.getAppDownloadDir(context, packageName, versionCode)
         }
-        return downloadDir.listFiles()!!.filter { it.path.endsWith(".apk") }
+        val apkFiles = downloadDir.listFiles()!!.filter { it.path.endsWith(".apk") }
+        if (BuildConfig.FLAVOR != Constants.FLAVOUR_BYD) return apkFiles
+
+        return patch(packageName, apkFiles)
     }
 
     fun getUri(file: File): Uri = FileProvider.getUriForFile(
@@ -137,4 +142,13 @@ abstract class InstallerBase(private val context: Context) : IInstaller {
         "${BuildConfig.APPLICATION_ID}.fileProvider",
         file
     )
+
+    fun patch(packageName: String, apkFiles: List<File>): List<File> {
+        AuroraApp.events.send(InstallerEvent.Installing(packageName))
+
+        val patcher = Patcher(context)
+        val apkFiles = patcher.patch(apkFiles)
+
+        return apkFiles
+    }
 }

@@ -138,6 +138,11 @@ configure<ApplicationExtension> {
             dimension = "device"
             versionNameSuffix = "-preload"
         }
+
+        create("byd") {
+            dimension = "device"
+            versionNameSuffix = "-byd"
+        }
     }
 
     buildFeatures {
@@ -153,6 +158,12 @@ configure<ApplicationExtension> {
 
     androidResources {
         generateLocaleConfig = true
+    }
+
+    packaging {
+        resources {
+            excludes.add("org/bouncycastle/pqc/crypto/picnic/*.properties")
+        }
     }
 
     dependenciesInfo {
@@ -180,6 +191,10 @@ ktlint {
 }
 
 dependencies {
+    // patcher
+    implementation(files("libs/ARSCLib-1.3.8.jar"))
+    implementation("com.android.tools.build:apksig:8.8.0")
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
 
     // Google's Goodies
     implementation(libs.google.android.material)

@@ -31,6 +31,15 @@ import com.aurora.store.compose.navigation.Screen
 import com.aurora.store.data.model.PermissionType
 import dagger.hilt.android.AndroidEntryPoint
 
+import androidx.lifecycle.lifecycleScope
+import android.os.Process
+import androidx.preference.SwitchPreferenceCompat
+import com.aurora.store.data.providers.AccountProvider
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
+
 @AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -59,6 +68,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findNavController().navigate(R.id.updatesPreference)
             true
         }
+
+        setupSpoofAutomotive()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,6 +77,30 @@ class SettingsFragment : PreferenceFragmentCompat() {
         view.findViewById<Toolbar>(R.id.toolbar)?.apply {
             title = getString(R.string.title_settings)
             setNavigationOnClickListener { findNavController().navigateUp() }
+        }
+    }
+
+    fun setupSpoofAutomotive() {
+        findPreference<SwitchPreferenceCompat>("pref_spoof_automotive_property")?.setOnPreferenceClickListener {
+            Snackbar.make(
+                requireView(),
+                requireContext().getString(R.string.force_restart_snack),
+                Snackbar.LENGTH_INDEFINITE
+            )
+                .setAction(requireContext().getString(R.string.action_restart)) {
+                    val context = requireContext()
+
+                    AccountProvider.logout(context)
+                    context.cacheDir.deleteRecursively()
+
+                    lifecycleScope.launch {
+                        delay(100)
+                        Process.killProcess(Process.myPid())
+                        exitProcess(0)
+//                        requireActivity().startActivity(context.packageManager.getLaunchIntentForPackage(context.packageName))
+                    }
+                }.show()
+            true
         }
     }
 }

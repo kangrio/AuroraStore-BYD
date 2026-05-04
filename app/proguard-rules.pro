@@ -136,3 +136,5 @@
 -dontwarn com.huawei.**
 -keep class com.hihonor.** { *; }
 -dontwarn com.hihonor.**
+
+-keep class com.android.apksig.** { *; }
