@@ -42,6 +42,7 @@ class PermissionProvider(private val fragment: Fragment) :
          */
         fun isPermittedToInstall(context: Context, app: App): Boolean {
             if (!isGranted(context, PermissionType.INSTALL_UNKNOWN_APPS)) return false
+            if (!isGranted(context, PermissionType.EXTERNAL_STORAGE)) return false
             return when {
                 app.fileList.requiresObbDir() -> {
                     return isGranted(context, PermissionType.STORAGE_MANAGER)

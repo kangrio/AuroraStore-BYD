@@ -35,7 +35,7 @@ class SplashFragment : BaseFlavouredSplashFragment() {
         binding.btnGoogle.hide()
 
         lifecycleScope.launch {
-            delay(1000)
+            delay(100)
             binding.btnAnonymous.allViews.firstOrNull{ it is MaterialButton }?.performClick()
         }
     }

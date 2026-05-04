@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
+import com.aurora.Constants
 import com.aurora.extensions.appInfo
 import com.aurora.extensions.requiresGMS
 import com.aurora.extensions.requiresObbDir
@@ -56,6 +57,7 @@ import com.aurora.extensions.share
 import com.aurora.extensions.toast
 import com.aurora.gplayapi.data.models.App
 import com.aurora.gplayapi.data.models.Review
+import com.aurora.store.BuildConfig
 import com.aurora.gplayapi.data.models.datasafety.Report as DataSafetyReport
 import com.aurora.store.R
 import com.aurora.store.compose.composable.ContainedLoadingIndicator
@@ -272,7 +274,7 @@ private fun ScreenContentApp(
             val requiredPermissions = setOfNotNull(
                 PermissionType.INSTALL_UNKNOWN_APPS,
                 if (app.fileList.requiresObbDir()) PermissionType.STORAGE_MANAGER else null,
-                if (app.fileList.requiresObbDir()) PermissionType.EXTERNAL_STORAGE else null
+                if (app.fileList.requiresObbDir() || BuildConfig.FLAVOR == Constants.FLAVOUR_BYD) PermissionType.EXTERNAL_STORAGE else null
             )
             showExtraPane(Screen.PermissionRationale(requiredPermissions = requiredPermissions))
         }

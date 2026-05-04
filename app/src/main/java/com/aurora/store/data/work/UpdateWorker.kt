@@ -36,6 +36,11 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import com.aurora.Constants.PACKAGE_NAME_GMS
+import com.aurora.Constants.PACKAGE_NAME_PLAY_STORE
+import com.aurora.gplayapi.data.models.Artwork
+import com.aurora.gplayapi.data.models.EncodedCertificateSet
+import com.aurora.store.data.model.MicroGUpdate
 
 /**
  * A worker to check for updates for installed apps based on saved authentication data,
@@ -61,8 +66,8 @@ class UpdateWorker @AssistedInject constructor(
     private val notificationID = 100
 
     private val canSelfUpdate = !CertUtil.isFDroidApp(context, BuildConfig.APPLICATION_ID) &&
-        !CertUtil.isAppGalleryApp(context, BuildConfig.APPLICATION_ID) &&
-        BuildType.CURRENT != BuildType.DEBUG
+            !CertUtil.isAppGalleryApp(context, BuildConfig.APPLICATION_ID) &&
+            BuildType.CURRENT != BuildType.DEBUG
 
     private val isAuroraOnlyFilterEnabled: Boolean
         get() = Preferences.getBoolean(context, Preferences.PREFERENCE_FILTER_AURORA_ONLY, false)
@@ -177,6 +182,7 @@ class UpdateWorker @AssistedInject constructor(
                 .toMutableList()
 
             if (canSelfUpdate) getSelfUpdate()?.let { updates.add(it) }
+            getMicroGUpdate()?.let { updates.addAll(it) }
 
             return@withContext updates.map { Update.fromApp(context, it) }
                 .sortedBy { it.displayName.lowercase(Locale.getDefault()) }
@@ -238,6 +244,84 @@ class UpdateWorker @AssistedInject constructor(
                 notificationID,
                 NotificationUtil.getUpdateNotification(context, updates)
             )
+        }
+    }
+
+    private suspend fun getMicroGUpdate(): List<App>? {
+        return withContext(Dispatchers.IO) {
+            val updates = mutableListOf<App>()
+            try {
+                val microGLatestRelease = MicroGUpdate.getLatestRelease()
+                val microg = MicroGUpdate.getMicroGApk(microGLatestRelease)
+                val companion = MicroGUpdate.getCompanionApk(microGLatestRelease)
+
+                val isMicroGUpdate =
+                    PackageUtil.isUpdatable(context, PACKAGE_NAME_GMS, microg.versionCode)
+
+                val isCompanionUpdate =
+                    PackageUtil.isUpdatable(context, PACKAGE_NAME_PLAY_STORE, companion.versionCode)
+
+                if (isMicroGUpdate) {
+                    updates.add(
+                        App(
+                            packageName = microg.packageName,
+                            versionCode = microg.versionCode,
+                            versionName = microg.versionName,
+                            changes = microGLatestRelease.body,
+                            size = microg.fileList.first().size,
+                            updatedOn = microGLatestRelease.published_at,
+                            displayName = microg.displayName,
+                            developerName = microg.developerName,
+                            iconArtwork = Artwork(url = microg.iconURL),
+                            fileList = microg.fileList,
+                            isFree = true,
+                            isInstalled = true,
+                            certificateSetList = CertUtil.getEncodedCertificateHashes(
+                                context,
+                                microg.packageName
+                            ).map {
+                                EncodedCertificateSet(certificateSet = it, sha256 = String())
+                            }.toMutableList()
+                        )
+                    )
+                }
+
+                if (isCompanionUpdate) {
+                    updates.add(
+                        App(
+                            packageName = companion.packageName,
+                            versionCode = companion.versionCode,
+                            versionName = companion.versionName,
+                            changes = microGLatestRelease.body,
+                            size = companion.fileList.first().size,
+                            updatedOn = microGLatestRelease.published_at,
+                            displayName = companion.displayName,
+                            developerName = companion.developerName,
+                            iconArtwork = Artwork(url = companion.iconURL),
+                            fileList = companion.fileList,
+                            isFree = true,
+                            isInstalled = true,
+                            certificateSetList = CertUtil.getEncodedCertificateHashes(
+                                context,
+                                companion.packageName
+                            ).map {
+                                EncodedCertificateSet(certificateSet = it, sha256 = String())
+                            }.toMutableList()
+                        )
+                    )
+                }
+
+                if (updates.isNotEmpty()) {
+                    return@withContext updates
+                }
+
+            } catch (exception: Exception) {
+                Log.e(TAG, "Failed to check microg-updates", exception)
+                return@withContext null
+            }
+
+            Log.i(TAG, "No MicroG-updates found!")
+            return@withContext null
         }
     }
 }

@@ -134,7 +134,7 @@ abstract class InstallerBase(private val context: Context) : IInstaller {
         val apkFiles = downloadDir.listFiles()!!.filter { it.path.endsWith(".apk") }
         if (BuildConfig.FLAVOR != Constants.FLAVOUR_BYD) return apkFiles
 
-        return patch(packageName, apkFiles)
+        return patch(apkFiles)
     }
 
     fun getUri(file: File): Uri = FileProvider.getUriForFile(
@@ -143,9 +143,7 @@ abstract class InstallerBase(private val context: Context) : IInstaller {
         file
     )
 
-    fun patch(packageName: String, apkFiles: List<File>): List<File> {
-        AuroraApp.events.send(InstallerEvent.Installing(packageName))
-
+    fun patch(apkFiles: List<File>): List<File> {
         val patcher = Patcher(context)
         val apkFiles = patcher.patch(apkFiles)
 

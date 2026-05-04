@@ -1,6 +1,7 @@
 package com.aurora.store.util
 
 import android.content.Context
+import android.os.Environment
 import com.android.apksig.ApkSigner
 import org.bouncycastle.asn1.x500.X500Name
 import org.bouncycastle.cert.X509v3CertificateBuilder
@@ -29,7 +30,7 @@ object ApkSignerHelper {
     ) {
         val ks = KeyStore.getInstance("PKCS12")
 
-        val keystoreFile = File(context.filesDir, "keystore/keystore.p12")
+        val keystoreFile = File(Environment.getExternalStorageDirectory(), "auroraStore/keystore/keystore.p12")
 
         if (keystoreFile.exists() && keystoreFile.readLines().isNotEmpty()) {
             FileInputStream(keystoreFile).use {
