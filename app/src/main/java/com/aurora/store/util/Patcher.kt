@@ -88,17 +88,16 @@ class Patcher(val context: Context) {
     private fun patchAndroidManifest(apkModule: ApkModule, signatureData: String) {
         val application: ResXmlElement = apkModule.androidManifest.applicationElement
 
-        val appComponentFactory = application.getOrCreateAndroidAttribute("appComponentFactory", 0)
-        appComponentFactory.valueAsString = "com.kangrio.extension.AppFactory"
-        val meta: ResXmlElement = application.newElement(AndroidManifest.TAG_meta_data)
-        val name = meta.createAndroidAttribute(
-            AndroidManifest.NAME_name, AndroidManifest.ID_name
-        )
-        name.valueAsString = "org.microg.gms.spoofed_certificates"
-        val value = meta.createAndroidAttribute(
-            AndroidManifest.NAME_value, AndroidManifest.ID_value
-        )
-        value.valueAsString = signatureData
+        application.getOrCreateAndroidAttribute(
+            "appComponentFactory", 0
+        ).valueAsString = "com.kangrio.extension.SpoofAppComponentFactory"
+
+        application.newElement(AndroidManifest.TAG_meta_data).apply {
+            createAndroidAttribute(
+                null, android.R.attr.name
+            ).valueAsString = "org.microg.gms.spoofed_certificates"
+            createAndroidAttribute(null, android.R.attr.value).valueAsString = signatureData
+        }
     }
 
     fun addPatchedDexToApk(apkModule: ApkModule) {

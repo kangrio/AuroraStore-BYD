@@ -42,6 +42,11 @@ If MicroG is not installed:
 * Google Search
 * Google Gemini
 * Google News
+* Google News
+* Gmail
+* YouTube
+* YouTube Music
+* etc
 
 ✔ Basic functionality works
 ✔ Login may work depending on MicroG setup
@@ -50,12 +55,10 @@ If MicroG is not installed:
 
 ## ❌ Tested Apps (Not Working Properly)
 
-* YouTube
-* YouMusic
+* Netflix
 
-⚠ Issue:
-
-* Video / music stops after ~1 minute
+#### ⚠ Issue:
+* App crash
 
 ### Possible Reasons
 
@@ -79,13 +82,6 @@ Reasons include:
 👉 You must test apps yourself. No guarantee of compatibility.
 
 ---
-
-## 📌 Recommendation
-
-> If you need YouTube or music streaming:
-
-* Do NOT install from this app
-* Use ReVanced or Morphe instead
 
 ## 🚗 Tested Environment
 
