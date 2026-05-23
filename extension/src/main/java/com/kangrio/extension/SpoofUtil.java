@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.ArrayMap;
 import android.util.ArraySet;
 import android.util.Base64;
 import android.util.Log;
@@ -74,8 +75,7 @@ public class SpoofUtil {
     public final String URL = "https://github.com/L-JINBIN/ApkSignatureKillerEx";
     static String TAG = "SpoofUtil";
 
-    static Map<String, Pair<Signature, SigningInfo>> mSignatureCache = Map.of();
-
+    static final ArrayMap<String, Pair<Signature, SigningInfo>> mSignatureCache = new ArrayMap<>();
 
     private static PackageInfo spoofSignature(PackageInfo packageInfo, String signatureData) {
         byte[] signatureByte = Base64.decode(signatureData, Base64.DEFAULT);
@@ -258,7 +258,7 @@ public class SpoofUtil {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             packageInfo.signingInfo = cache.second;
                         }
-                        Log.d(TAG, "Spoofed signature: " + packageInfo.packageName + " " + sigToShar1(packageInfo.signatures[0]));
+                        Log.d(TAG, "[CACHE] Spoofed signature: " + packageInfo.packageName + " " + sigToShar1(packageInfo.signatures[0]));
                         return packageInfo;
                     }
 
