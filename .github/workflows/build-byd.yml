@@ -54,7 +54,13 @@ jobs:
 
       - name: Generate tag
         id: tag
-        run: echo "TAG=byd-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+        run: |
+          BRANCH="${GITHUB_REF_NAME#release/}"
+          BRANCH="${BRANCH//\//-}"
+          
+          TAG="byd-${BRANCH}-$(date +'%Y%m%d')"
+          
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
