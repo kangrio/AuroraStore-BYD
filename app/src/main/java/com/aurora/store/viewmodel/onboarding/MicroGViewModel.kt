@@ -20,6 +20,7 @@ import com.aurora.store.data.helper.DownloadHelper
 import com.aurora.store.data.model.DownloadStatus
 import com.aurora.store.data.model.ExternalItem
 import com.aurora.store.data.model.InstallStatus
+import com.aurora.store.data.model.MicroGUpdate
 import com.aurora.store.data.model.NetworkStatus
 import com.aurora.store.data.providers.NetworkProvider
 import com.aurora.store.data.room.download.Download
@@ -110,7 +111,7 @@ class MicroGViewModel @Inject constructor(
         )
     )
 
-    private val bundle = listOf(microGServiceApk, microGCompanionApk)
+    private var bundle = listOf(microGServiceApk, microGCompanionApk)
 
     init {
         AuroraApp.events.installerEvent.onEach { event ->
@@ -144,6 +145,7 @@ class MicroGViewModel @Inject constructor(
 
     fun downloadMicroG() {
         viewModelScope.launch(Dispatchers.IO) {
+            bundle = MicroGUpdate.getLatestVersionBundle()
             bundle.forEach { enqueueIfNeeded(it) }
         }
     }

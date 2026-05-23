@@ -109,6 +109,14 @@ class MicroGUpdate {
                 )
             )
         }
+
+        fun getLatestVersionBundle(): List<ExternalApk> {
+            val githubRelease = getLatestRelease()
+            val microGServiceLatestApk = getMicroGApk(githubRelease)
+            val microGCompanionLatestApk = getCompanionApk(githubRelease)
+
+            return listOf(microGServiceLatestApk, microGCompanionLatestApk)
+        }
     }
 }
 
