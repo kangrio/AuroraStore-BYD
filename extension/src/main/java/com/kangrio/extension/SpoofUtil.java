@@ -96,6 +96,12 @@ public class SpoofUtil {
                 }
             }
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mSignatureCache.put(packageInfo.packageName, Pair.create(signature, packageInfo.signingInfo));
+        } else {
+            mSignatureCache.put(packageInfo.packageName, Pair.create(signature, null));
+        }
+
         return packageInfo;
     }
 
@@ -246,6 +252,16 @@ public class SpoofUtil {
                         : packageInfo.signatures != null && packageInfo.signatures.length > 0;
 
                 if (packageInfo.packageName != null && needSpoof) {
+                    Pair<Signature, SigningInfo> cache = mSignatureCache.get(packageInfo.packageName);
+                    if (cache != null) {
+                        packageInfo.signatures[0] = cache.first;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            packageInfo.signingInfo = cache.second;
+                        }
+                        Log.d(TAG, "Spoofed signature: " + packageInfo.packageName + " " + sigToShar1(packageInfo.signatures[0]));
+                        return packageInfo;
+                    }
+
                     if (KNOWN_GOOGLE_PACKAGES.contains(packageInfo.packageName.toLowerCase())) {
                         packageInfo = spoofSignature(packageInfo, fakeGoogleSignatureData);
                     } else {

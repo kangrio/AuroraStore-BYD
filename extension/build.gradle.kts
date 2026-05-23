@@ -64,8 +64,7 @@ abstract class BuildExtensionTask : DefaultTask() {
     fun run() {
         fs.copy {
             from("build/intermediates/dex/release/minifyReleaseWithR8/classes.dex")
-            into("build/lib")
-            rename("classes.dex", "classes")
+            into("../app/src/main/res/raw")
         }
     }
 }
