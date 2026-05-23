@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2021 Rahul Kumar Patel <whyorean@gmail.com>
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
@@ -20,6 +21,7 @@ import com.aurora.gplayapi.data.models.StreamCluster
 import com.aurora.gplayapi.helpers.SearchHelper
 import com.aurora.gplayapi.helpers.contracts.SearchContract
 import com.aurora.gplayapi.helpers.web.WebSearchHelper
+import com.aurora.store.data.PageResult
 import com.aurora.store.data.model.SearchFilter
 import com.aurora.store.data.paging.GenericPagingSource.Companion.manualPager
 import com.aurora.store.data.providers.AuthProvider
@@ -80,7 +82,7 @@ class SearchViewModel @Inject constructor(
         }.distinctBy { app -> app.packageName }
 
         manualPager { page ->
-            try {
+            val items = try {
                 when (page) {
                     1 -> contract.searchResults(query)
                         .also { nextBundleUrl = it.streamNextPageUrl }
@@ -110,6 +112,7 @@ class SearchViewModel @Inject constructor(
                 Log.e(TAG, "Failed to search results for $query", exception)
                 emptyList()
             }
+            PageResult(items)
         }.flow.distinctUntilChanged()
             .cachedIn(viewModelScope)
             .onEach { _apps.value = it }

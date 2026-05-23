@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -7,16 +8,19 @@ package com.aurora.store.compose.ui.downloads
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -37,12 +41,15 @@ import com.aurora.gplayapi.data.models.App
 import com.aurora.store.R
 import com.aurora.store.compose.composable.ContainedLoadingIndicator
 import com.aurora.store.compose.composable.DownloadListItem
-import com.aurora.store.compose.composable.Error
+import com.aurora.store.compose.composable.Placeholder
+import com.aurora.store.compose.composable.ScrollHint
 import com.aurora.store.compose.composable.TopAppBar
+import com.aurora.store.compose.navigation.Destination
 import com.aurora.store.compose.preview.AppPreviewProvider
 import com.aurora.store.compose.preview.ThemePreviewProvider
 import com.aurora.store.compose.ui.downloads.menu.DownloadsMenu
 import com.aurora.store.compose.ui.downloads.menu.MenuItem
+import com.aurora.store.compose.ui.sheets.DownloadActionsSheet
 import com.aurora.store.data.model.DownloadStatus
 import com.aurora.store.data.room.download.Download
 import com.aurora.store.viewmodel.downloads.DownloadsViewModel
@@ -51,9 +58,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun DownloadsScreen(
-    onNavigateUp: () -> Unit,
-    viewModel: DownloadsViewModel = hiltViewModel(),
-    onNavigateToAppDetails: (packageName: String) -> Unit
+    onNavigateTo: (Destination) -> Unit,
+    viewModel: DownloadsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val downloads = viewModel.downloads.collectAsLazyPagingItems()
@@ -73,9 +79,8 @@ fun DownloadsScreen(
     )
 
     ScreenContent(
-        onNavigateUp = onNavigateUp,
         downloads = downloads,
-        onNavigateToAppDetails = onNavigateToAppDetails,
+        onNavigateTo = onNavigateTo,
         onCancelAll = { viewModel.cancelAll() },
         onForceClearAll = { viewModel.clearAll() },
         onClearFinished = { viewModel.clearFinished() },
@@ -94,8 +99,7 @@ fun DownloadsScreen(
 @Composable
 private fun ScreenContent(
     downloads: LazyPagingItems<Download> = emptyPagingItems(),
-    onNavigateUp: () -> Unit = {},
-    onNavigateToAppDetails: (packageName: String) -> Unit = {},
+    onNavigateTo: (Destination) -> Unit = {},
     onCancel: (packageName: String) -> Unit = {},
     onClear: (download: Download) -> Unit = {},
     onExport: (download: Download) -> Unit = {},
@@ -111,6 +115,19 @@ private fun ScreenContent(
      * Save the initial loading state to make sure we don't replay the loading animation again.
      */
     var initialLoad by rememberSaveable { mutableStateOf(true) }
+    var actionsTarget by rememberSaveable { mutableStateOf<Download?>(null) }
+
+    actionsTarget?.let { target ->
+        DownloadActionsSheet(
+            download = target,
+            onDismiss = { actionsTarget = null },
+            onShowDetails = { onNavigateTo(Destination.AppDetails(target.packageName)) },
+            onCancel = { onCancel(target.packageName) },
+            onInstall = { onInstall(target) },
+            onExport = { onExport(target) },
+            onClear = { onClear(target) }
+        )
+    }
 
     @Composable
     fun SetupMenu() {
@@ -127,7 +144,6 @@ private fun ScreenContent(
         topBar = {
             TopAppBar(
                 title = stringResource(R.string.title_download_manager),
-                onNavigateUp = onNavigateUp,
                 actions = { if (downloads.itemCount != 0) SetupMenu() }
             )
         }
@@ -136,7 +152,7 @@ private fun ScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(vertical = dimensionResource(R.dimen.padding_medium))
+                .padding(vertical = dimensionResource(R.dimen.spacing_medium))
         ) {
             when {
                 downloads.loadState.refresh is LoadState.Loading && initialLoad -> {
@@ -147,29 +163,34 @@ private fun ScreenContent(
                     initialLoad = false
 
                     if (downloads.itemCount == 0) {
-                        Error(
+                        Placeholder(
                             modifier = Modifier.padding(paddingValues),
                             painter = painterResource(R.drawable.ic_download_manager),
                             message = stringResource(R.string.download_none)
                         )
                     } else {
-                        LazyColumn {
-                            items(
-                                count = downloads.itemCount,
-                                key = downloads.itemKey { it.packageName }
-                            ) { index ->
-                                downloads[index]?.let { download ->
-                                    DownloadListItem(
-                                        modifier = Modifier.animateItem(),
-                                        download = download,
-                                        onClick = { onNavigateToAppDetails(download.packageName) },
-                                        onClear = { onClear(download) },
-                                        onCancel = { onCancel(download.packageName) },
-                                        onExport = { onExport(download) },
-                                        onInstall = { onInstall(download) }
-                                    )
+                        val listState = rememberLazyListState()
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            LazyColumn(
+                                state = listState
+                            ) {
+                                items(
+                                    count = downloads.itemCount,
+                                    key = downloads.itemKey { it.packageName }
+                                ) { index ->
+                                    downloads[index]?.let { download ->
+                                        DownloadListItem(
+                                            modifier = Modifier.animateItem(),
+                                            download = download,
+                                            onClick = { actionsTarget = download }
+                                        )
+                                    }
                                 }
                             }
+                            ScrollHint(
+                                listState = listState,
+                                modifier = Modifier.align(Alignment.BottomCenter)
+                            )
                         }
                     }
                 }

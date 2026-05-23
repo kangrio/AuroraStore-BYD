@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -13,5 +14,6 @@ enum class MenuItem {
     SHARE,
     MANUAL_DOWNLOAD,
     APP_INFO,
-    ADD_TO_HOME
+    ADD_TO_HOME,
+    PLAY_STORE
 }

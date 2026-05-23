@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -8,7 +9,9 @@ package com.aurora.store.data.paging
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
+import androidx.paging.PagingSource.LoadResult.Page.Companion.COUNT_UNDEFINED
 import androidx.paging.PagingState
+import com.aurora.store.data.PageResult
 import com.aurora.store.data.paging.GenericPagingSource.Companion.manualPager
 import com.aurora.store.data.paging.GenericPagingSource.Companion.pager
 import kotlinx.coroutines.Dispatchers
@@ -22,11 +25,11 @@ import kotlinx.coroutines.withContext
  * @param block Data to load into the pager
  */
 class GenericPagingSource<T : Any>(
-    private val block: suspend (Int) -> List<T>
+    private val block: suspend (Int) -> PageResult<T>
 ) : PagingSource<Int, T>() {
 
     companion object {
-        private const val DEFAULT_PAGE_SIZE = 20
+        const val DEFAULT_PAGE_SIZE = 20
 
         /**
          * Method to create pager objects using [PagingSource]
@@ -53,7 +56,7 @@ class GenericPagingSource<T : Any>(
         fun <T : Any> manualPager(
             pageSize: Int = DEFAULT_PAGE_SIZE,
             enablePlaceholders: Boolean = true,
-            data: suspend (Int) -> List<T>
+            data: suspend (Int) -> PageResult<T>
         ): Pager<Int, T> = Pager(
             config = PagingConfig(enablePlaceholders = enablePlaceholders, pageSize = pageSize),
             pagingSourceFactory = { GenericPagingSource(data) }
@@ -64,13 +67,12 @@ class GenericPagingSource<T : Any>(
         val page = params.key ?: 1
         return try {
             withContext(Dispatchers.IO) {
-                val data = block(page)
-                val totalPages = if (data.isNotEmpty()) page + 1 else page
+                val result = block(page)
                 LoadResult.Page(
-                    data = data,
+                    data = result.items,
                     prevKey = if (page == 1) null else page - 1,
-                    nextKey = if (page == totalPages) null else totalPages,
-                    itemsAfter = if (page == totalPages) 0 else DEFAULT_PAGE_SIZE
+                    nextKey = if (result.hasMore) page + 1 else null,
+                    itemsAfter = if (result.hasMore) COUNT_UNDEFINED else 0
                 )
             }
         } catch (exception: Exception) {

@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -34,6 +35,7 @@ import com.aurora.store.compose.preview.ThemePreviewProvider
 fun FavouriteMenu(
     modifier: Modifier = Modifier,
     isExpanded: Boolean = false,
+    items: Int = 0,
     onMenuItemClicked: (menuItem: MenuItem) -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(isExpanded) }
@@ -56,7 +58,8 @@ fun FavouriteMenu(
             )
             DropdownMenuItem(
                 text = { Text(text = stringResource(R.string.action_export)) },
-                onClick = { onClick(MenuItem.EXPORT) }
+                onClick = { onClick(MenuItem.EXPORT) },
+                enabled = items > 0
             )
         }
     }

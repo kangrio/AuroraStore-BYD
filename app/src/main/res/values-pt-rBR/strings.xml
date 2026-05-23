@@ -472,4 +472,11 @@
     <string name="page"><xliff:g id="number">%1$d</xliff:g>ª página</string>
     <string name="action_skip">Pular</string>
     <string name="force_restart_snack">Reiniciar para aplicar mudanças?</string>
+    <string name="preparing_to_download">Preparando para baixar</string>
+    <string name="verifying_downloads">Verificando downloads</string>
+    <string name="action_retry">Tentar novamente</string>
+    <string name="action_view_on_play">Ver na Play Store</string>
+    <string name="header_blacklist_selected">Bloqueados</string>
+    <string name="header_blacklist_others">Outros</string>
+    <string name="microg_removed_auth_warning">O microG não está mais instalado. Configure novamente para manter as coisas funcionando normalmente.</string>
 </resources>
