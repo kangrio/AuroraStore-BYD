@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -9,12 +10,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -97,27 +96,25 @@ private fun PageContent(onAboutAurora: () -> Unit = {}) {
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = dimensionResource(R.dimen.padding_medium)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_xxsmall))
+        contentPadding = PaddingValues(horizontal = dimensionResource(R.dimen.spacing_medium)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xsmall))
     ) {
         stickyHeader {
-            Surface(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-                ) {
-                    Text(
-                        text = stringResource(R.string.onboarding_title_welcome),
-                        style = MaterialTheme.typography.headlineLargeEmphasized,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = stringResource(R.string.onboarding_welcome_select),
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            Column(
+                modifier = Modifier.padding(dimensionResource(R.dimen.spacing_medium))
+            ) {
+                Text(
+                    text = stringResource(R.string.onboarding_title_welcome),
+                    style = MaterialTheme.typography.headlineLargeEmphasized,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = stringResource(R.string.onboarding_welcome_select),
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
 

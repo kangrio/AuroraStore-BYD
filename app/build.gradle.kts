@@ -5,20 +5,15 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-@file:OptIn(KspExperimental::class)
-
 import com.android.build.api.dsl.ApplicationExtension
-import com.google.devtools.ksp.KspExperimental
 import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.parcelize)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.google.ksp)
-    alias(libs.plugins.androidx.navigation)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.rikka.tools.refine.plugin)
     alias(libs.plugins.hilt.android.plugin)
@@ -53,16 +48,22 @@ kotlin {
 configure<ApplicationExtension> {
     namespace = "com.aurora.store"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 0
+        }
     }
 
     defaultConfig {
         applicationId = "com.aurora.store"
-        minSdk = 23
-        targetSdk = 36
+        minSdk {
+            version = release(23)
+        }
+        targetSdk {
+            version = release(37)
+        }
 
-        versionCode = 74
-        versionName = "4.8.2"
+        versionCode = 75
+        versionName = "4.8.3"
 
         testInstrumentationRunner = "com.aurora.store.HiltInstrumentationTestRunner"
         testInstrumentationRunnerArguments["disableAnalytics"] = "true"
@@ -126,23 +127,25 @@ configure<ApplicationExtension> {
         create("vanilla") {
             isDefault = true
             dimension = "device"
+            buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
         }
 
         create("huawei") {
             dimension = "device"
             versionNameSuffix = "-hw"
+            buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "false")
         }
 
         // This flavor is only for preloaded devices / users who push the app to system
         create("preload") {
             dimension = "device"
             versionNameSuffix = "-preload"
+            buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
         }
     }
 
     buildFeatures {
         buildConfig = true
-        viewBinding = true
         aidl = true
         compose = true
     }
@@ -191,8 +194,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.navigation3)
     implementation(libs.androidx.preference.ktx)
-    implementation(libs.androidx.swiperefreshlayout)
-    implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.paging.runtime)
 
@@ -203,13 +204,12 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
 
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -222,13 +222,6 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
-
-    // Shimmer
-    implementation(libs.facebook.shimmer)
-
-    // Epoxy
-    implementation(libs.airbnb.epoxy.android)
-    ksp(libs.airbnb.epoxy.processor)
 
     // HTTP Clients
     implementation(libs.squareup.okhttp)

@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -105,14 +106,18 @@ fun Details(
         )
     }
 
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(R.dimen.spacing_medium))
+    ) {
         AnimatedAppIcon(
             modifier = Modifier.requiredSize(dimensionResource(R.dimen.icon_size_large)),
             iconUrl = app.iconArtwork.url,
             inProgress = state.inProgress(),
             progress = state.progress()
         )
-        Column(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.margin_small))) {
+        Column(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_small))) {
             Text(
                 text = app.displayName,
                 style = MaterialTheme.typography.titleLarge,
@@ -167,7 +172,7 @@ fun Details(
 @Composable
 private fun DetailsPreview(@PreviewParameter(AppPreviewProvider::class) app: App) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
     ) {
         Details(app = app)
     }

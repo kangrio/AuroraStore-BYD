@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -20,7 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +40,7 @@ import com.aurora.gplayapi.data.models.App
 import com.aurora.gplayapi.data.models.Rating
 import com.aurora.gplayapi.data.models.Review
 import com.aurora.store.R
-import com.aurora.store.compose.composable.Header
+import com.aurora.store.compose.composable.SectionHeader
 import com.aurora.store.compose.composable.details.RatingListItem
 import com.aurora.store.compose.composable.details.ReviewListItem
 import com.aurora.store.compose.preview.AppPreviewProvider
@@ -58,7 +59,7 @@ fun RatingAndReviews(
     rating: Rating,
     featuredReviews: List<Review> = emptyList(),
     onNavigateToDetailsReview: () -> Unit = {},
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2()
 ) {
     val stars = listOf(
         rating.oneStar,
@@ -81,18 +82,20 @@ fun RatingAndReviews(
         }
     }
 
-    Header(
+    SectionHeader(
         title = stringResource(R.string.details_ratings),
         onClick = onNavigateToDetailsReview
     )
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(R.dimen.spacing_medium)),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small))
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_large))
     ) {
         Column(
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
+            modifier = Modifier.padding(dimensionResource(R.dimen.spacing_medium)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -111,8 +114,7 @@ fun RatingAndReviews(
         }
 
         Column(
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small))
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
         ) {
             stars.reversed().fastForEach { star ->
                 RatingListItem(
@@ -127,8 +129,8 @@ fun RatingAndReviews(
         val pagerState = rememberPagerState { featuredReviews.size }
         HorizontalPager(
             state = pagerState,
-            contentPadding = PaddingValues(dimensionResource(R.dimen.padding_large)),
-            pageSpacing = dimensionResource(R.dimen.margin_medium)
+            contentPadding = PaddingValues(horizontal = dimensionResource(R.dimen.spacing_medium)),
+            pageSpacing = dimensionResource(R.dimen.spacing_medium)
         ) { page ->
             Box(
                 modifier = Modifier
@@ -156,7 +158,7 @@ private fun RatingAndReviewsPreview(@PreviewParameter(AppPreviewProvider::class)
         )
     }
     Column(
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
     ) {
         RatingAndReviews(rating = app.rating, featuredReviews = reviews)
     }

@@ -472,4 +472,11 @@
     <string name="page">Page <xliff:g id="number">%1$d</xliff:g></string>
     <string name="action_skip">Ignorer</string>
     <string name="force_restart_snack">Redémarrer pour appliquer les changements ?</string>
+    <string name="preparing_to_download">Préparation du téléchargement</string>
+    <string name="verifying_downloads">Vérification des téléchargements</string>
+    <string name="action_retry">Réessayer</string>
+    <string name="action_view_on_play">Afficher dans le magasin Play Store</string>
+    <string name="header_blacklist_selected">Exclue</string>
+    <string name="header_blacklist_others">Autres</string>
+    <string name="microg_removed_auth_warning">microG n’est plus installée. Relancez le programme d’installation pour que tout fonctionne correctement.</string>
 </resources>

@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,8 +26,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import com.aurora.gplayapi.data.models.App
 import com.aurora.store.R
-import com.aurora.store.compose.composable.Header
 import com.aurora.store.compose.composable.Info
+import com.aurora.store.compose.composable.SectionHeader
 import com.aurora.store.compose.preview.AppPreviewProvider
 import com.aurora.store.compose.preview.ThemePreviewProvider
 
@@ -38,11 +40,13 @@ import com.aurora.store.compose.preview.ThemePreviewProvider
  */
 @Composable
 fun Testing(isSubscribed: Boolean, onTestingSubscriptionChange: (subscribe: Boolean) -> Unit = {}) {
-    Header(title = stringResource(R.string.details_beta))
+    SectionHeader(title = stringResource(R.string.details_beta))
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(R.dimen.spacing_medium)),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small))
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
     ) {
         Info(
             modifier = Modifier.weight(1F),
@@ -75,7 +79,7 @@ fun Testing(isSubscribed: Boolean, onTestingSubscriptionChange: (subscribe: Bool
 @Composable
 private fun TestingPreview(@PreviewParameter(AppPreviewProvider::class) app: App) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
     ) {
         Testing(isSubscribed = app.testingProgram!!.isSubscribed)
     }

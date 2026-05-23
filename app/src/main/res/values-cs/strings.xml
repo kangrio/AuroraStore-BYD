@@ -473,4 +473,11 @@
     <string name="page">Stránka <xliff:g id="number">%1$d</xliff:g></string>
     <string name="action_skip">Přeskočit</string>
     <string name="force_restart_snack">Restartovat pro použití změn?</string>
+    <string name="action_retry">Opakovat</string>
+    <string name="preparing_to_download">Příprava ke stažení</string>
+    <string name="verifying_downloads">Ověřování stahování</string>
+    <string name="action_view_on_play">Zobrazit v Obchodě Play</string>
+    <string name="header_blacklist_selected">Na černé listině</string>
+    <string name="header_blacklist_others">Ostatní</string>
+    <string name="microg_removed_auth_warning">microG již není nainstalováno. Pro správné fungování aplikace znovu spusťte prvotní nastavení.</string>
 </resources>

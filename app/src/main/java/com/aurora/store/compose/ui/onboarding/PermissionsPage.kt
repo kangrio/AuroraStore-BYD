@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -6,10 +7,8 @@
 package com.aurora.store.compose.ui.onboarding
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,27 +45,25 @@ private fun PageContent(
     onPermissionCallback: (type: PermissionType) -> Unit = {}
 ) {
     PermissionList(
-        modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
+        modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_medium)),
         permissions = permissions,
         onPermissionCallback = onPermissionCallback,
         header = {
-            Surface(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-                ) {
-                    Text(
-                        text = stringResource(R.string.onboarding_title_permissions),
-                        style = MaterialTheme.typography.headlineLargeEmphasized,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = stringResource(R.string.onboarding_permission_select),
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            Column(
+                modifier = Modifier.padding(dimensionResource(R.dimen.spacing_medium))
+            ) {
+                Text(
+                    text = stringResource(R.string.onboarding_title_permissions),
+                    style = MaterialTheme.typography.headlineLargeEmphasized,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = stringResource(R.string.onboarding_permission_select),
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     )

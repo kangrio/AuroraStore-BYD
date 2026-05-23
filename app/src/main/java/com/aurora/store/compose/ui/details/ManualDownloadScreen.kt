@@ -1,10 +1,13 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 package com.aurora.store.compose.ui.details
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +28,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,10 +71,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun ManualDownloadScreen(
     packageName: String,
-    onNavigateUp: () -> Unit,
     onRequestInstall: (requestedApp: App) -> Unit,
     viewModel: AppDetailsViewModel = hiltViewModel(key = packageName),
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2()
 ) {
     val app by viewModel.app.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -84,7 +86,6 @@ fun ManualDownloadScreen(
         state = state,
         topAppBarTitle = topAppBarTitle,
         currentVersionCode = app!!.versionCode,
-        onNavigateUp = onNavigateUp,
         onRequestInstall = { versionCode ->
             val requestedApp = app!!.copy(
                 versionCode = versionCode,
@@ -104,10 +105,10 @@ private fun ScreenContent(
     state: AppState = AppState.Unavailable,
     topAppBarTitle: String? = null,
     currentVersionCode: Long = 0L,
-    onNavigateUp: () -> Unit = {},
     onRequestInstall: (versionCode: Long) -> Unit = {},
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2()
 ) {
+    val activity = LocalActivity.current as? ComponentActivity
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
     val errorMessage = stringResource(R.string.manual_download_version_error)
@@ -129,8 +130,7 @@ private fun ScreenContent(
         topBar = {
             TopAppBar(
                 title = topAppBarTitle,
-                navigationIcon = windowAdaptiveInfo.adaptiveNavigationIcon,
-                onNavigateUp = onNavigateUp
+                navigationIcon = windowAdaptiveInfo.adaptiveNavigationIcon
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
@@ -139,12 +139,14 @@ private fun ScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(dimensionResource(R.dimen.padding_medium)),
+                .padding(dimensionResource(R.dimen.spacing_medium)),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_medium))
+                verticalArrangement = Arrangement.spacedBy(
+                    dimensionResource(R.dimen.spacing_medium)
+                )
             ) {
                 Info(
                     painter = painterResource(R.drawable.ic_download_manager),
@@ -181,12 +183,12 @@ private fun ScreenContent(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(
-                    dimensionResource(R.dimen.padding_medium)
+                    dimensionResource(R.dimen.spacing_medium)
                 )
             ) {
                 FilledTonalButton(
                     modifier = Modifier.weight(1F),
-                    onClick = onNavigateUp
+                    onClick = { activity?.onBackPressedDispatcher?.onBackPressed() }
                 ) {
                     Text(
                         text = stringResource(R.string.action_close),

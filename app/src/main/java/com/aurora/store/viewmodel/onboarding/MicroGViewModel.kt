@@ -17,26 +17,44 @@ import com.aurora.gplayapi.data.models.PlayFile
 import com.aurora.store.AuroraApp
 import com.aurora.store.data.event.InstallerEvent
 import com.aurora.store.data.helper.DownloadHelper
+import com.aurora.store.data.model.DownloadStatus
+import com.aurora.store.data.model.ExternalItem
+import com.aurora.store.data.model.InstallStatus
+import com.aurora.store.data.model.NetworkStatus
+import com.aurora.store.data.providers.NetworkProvider
+import com.aurora.store.data.room.download.Download
 import com.aurora.store.data.room.suite.ExternalApk
 import com.aurora.store.util.PackageUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 data class MicroGUIState(
-    var isDownloading: Boolean = false,
-    var isInstalled: Boolean = false
-)
+    val items: List<ExternalItem> = emptyList(),
+    val isOnline: Boolean = true
+) {
+    val isInstalled: Boolean
+        get() = items.isNotEmpty() && items.all { it.status == InstallStatus.INSTALLED }
+    val isInProgress: Boolean
+        get() = items.any {
+            it.status == InstallStatus.DOWNLOADING || it.status == InstallStatus.INSTALLING
+        }
+    val hasFailed: Boolean
+        get() = !isInstalled && items.any { it.status == InstallStatus.FAILED }
+}
 
 @HiltViewModel
 class MicroGViewModel @Inject constructor(
     @ApplicationContext
     private val context: Context,
-    private val downloadHelper: DownloadHelper
+    private val downloadHelper: DownloadHelper,
+    networkProvider: NetworkProvider
 ) : ViewModel() {
 
     companion object {
@@ -53,15 +71,6 @@ class MicroGViewModel @Inject constructor(
 
         private const val ICON_BASE_URL = "https://raw.githubusercontent.com/microg"
         private const val ICON_FILE_PATH = "src/main/res/mipmap-xxxhdpi/ic_app.png"
-    }
-
-    init {
-        AuroraApp.events.installerEvent.onEach {
-            when (it) {
-                is InstallerEvent.Installed -> confirmBundleInstall()
-                else -> {}
-            }
-        }.launchIn(AuroraApp.scope)
     }
 
     var uiState: MicroGUIState by mutableStateOf(MicroGUIState())
@@ -101,27 +110,122 @@ class MicroGViewModel @Inject constructor(
         )
     )
 
-    fun downloadMicroG() {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (microGCompanionApk.isInstalled(context)) {
-                AuroraApp.events.send(InstallerEvent.Installed(PACKAGE_NAME_PLAY_STORE))
-            } else {
-                downloadHelper.enqueueStandalone(microGCompanionApk)
-                uiState = uiState.copy(isDownloading = true)
+    private val bundle = listOf(microGServiceApk, microGCompanionApk)
+
+    init {
+        AuroraApp.events.installerEvent.onEach { event ->
+            when (event) {
+                is InstallerEvent.Installed -> refresh()
+                is InstallerEvent.Uninstalled -> handleUninstall(event.packageName)
+                else -> {}
+            }
+        }.launchIn(AuroraApp.scope)
+
+        viewModelScope.launch {
+            bundle.forEach { apk ->
+                val download = downloadHelper.getDownload(apk.packageName)
+                if (download?.status == DownloadStatus.COMPLETED && !isBundleApkInstalled(apk)) {
+                    downloadHelper.removeDownload(apk.packageName)
+                }
             }
 
-            if (microGServiceApk.isInstalled(context)) {
-                AuroraApp.events.send(InstallerEvent.Installed(PACKAGE_NAME_GMS))
-            } else {
-                downloadHelper.enqueueStandalone(microGServiceApk)
-                uiState = uiState.copy(isDownloading = true)
+            combine(
+                downloadHelper.downloadsList,
+                networkProvider.status.onStart { emit(NetworkStatus.AVAILABLE) }
+            ) { downloads, network ->
+                val byPackage = downloads.associateBy { it.packageName }
+                MicroGUIState(
+                    items = bundle.map { apk -> buildItem(apk, byPackage[apk.packageName]) },
+                    isOnline = network == NetworkStatus.AVAILABLE
+                )
+            }.onEach { uiState = it }.launchIn(viewModelScope)
+        }
+    }
+
+    fun downloadMicroG() {
+        viewModelScope.launch(Dispatchers.IO) {
+            bundle.forEach { enqueueIfNeeded(it) }
+        }
+    }
+
+    fun retryDownload() {
+        viewModelScope.launch(Dispatchers.IO) {
+            bundle.forEach { apk ->
+                downloadHelper.getDownload(apk.packageName)?.takeIf { it.isFinished }?.let {
+                    downloadHelper.clearDownload(apk.packageName, apk.versionCode)
+                }
+                enqueueIfNeeded(apk)
             }
         }
     }
 
-    private fun confirmBundleInstall() {
-        if (PackageUtil.isMicroGBundleInstalled(context)) {
-            uiState = uiState.copy(isInstalled = true, isDownloading = false)
+    private suspend fun enqueueIfNeeded(apk: ExternalApk) {
+        if (isBundleApkInstalled(apk)) {
+            AuroraApp.events.send(InstallerEvent.Installed(apk.packageName))
+        } else {
+            downloadHelper.enqueueStandalone(apk)
         }
+    }
+
+    // Validate against the microG-specific signature/version checks rather than mere package
+    // presence — a stock Play Store or older Companion would otherwise be reported as installed.
+    private fun isBundleApkInstalled(apk: ExternalApk): Boolean = when (apk.packageName) {
+        PACKAGE_NAME_GMS -> PackageUtil.hasSupportedMicroGVariant(context)
+        PACKAGE_NAME_PLAY_STORE -> PackageUtil.hasMicroGCompanion(context)
+        else -> apk.isInstalled(context)
+    }
+
+    private fun handleUninstall(packageName: String) {
+        val apk = bundle.find { it.packageName == packageName } ?: return
+        viewModelScope.launch {
+            downloadHelper.removeDownload(packageName)
+            uiState = uiState.copy(
+                items = uiState.items.map { item ->
+                    if (item.packageName == apk.packageName) {
+                        item.copy(status = InstallStatus.PENDING, progress = 0)
+                    } else {
+                        item
+                    }
+                }
+            )
+        }
+    }
+
+    private fun refresh() {
+        uiState = uiState.copy(
+            items = uiState.items.map { item ->
+                val apk = bundle.find { it.packageName == item.packageName }
+                if (item.status != InstallStatus.INSTALLED &&
+                    apk != null &&
+                    isBundleApkInstalled(apk)
+                ) {
+                    item.copy(status = InstallStatus.INSTALLED)
+                } else {
+                    item
+                }
+            }
+        )
+    }
+
+    private fun buildItem(apk: ExternalApk, download: Download?): ExternalItem {
+        val state = when {
+            isBundleApkInstalled(apk) -> InstallStatus.INSTALLED
+            download == null -> InstallStatus.PENDING
+            download.status == DownloadStatus.FAILED -> InstallStatus.FAILED
+            download.status == DownloadStatus.CANCELLED -> InstallStatus.PENDING
+            download.status == DownloadStatus.COMPLETED -> InstallStatus.INSTALLING
+            else -> InstallStatus.DOWNLOADING
+        }
+
+        return ExternalItem(
+            packageName = apk.packageName,
+            displayName = apk.displayName,
+            iconURL = apk.iconURL,
+            size = apk.fileList.sumOf { it.size },
+            status = state,
+            progress = download?.progress ?: 0,
+            speed = download?.speed ?: 0L,
+            timeRemaining = download?.timeRemaining ?: -1L
+        )
     }
 }

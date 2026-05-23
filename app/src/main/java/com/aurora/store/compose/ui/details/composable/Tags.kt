@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -8,6 +9,7 @@ package com.aurora.store.compose.ui.details.composable
 import android.text.format.Formatter
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -61,7 +63,8 @@ fun Tags(app: App) {
     ).filterKeys { it != null }
 
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+        contentPadding = PaddingValues(horizontal = dimensionResource(R.dimen.spacing_medium)),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
     ) {
         items(items = tags.keys.toList()) { label ->
             TagListItem(label = label!!, painter = painterResource(tags.getValue(label)))
@@ -74,7 +77,7 @@ fun Tags(app: App) {
 @Composable
 private fun TagsPreview(@PreviewParameter(AppPreviewProvider::class) app: App) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
     ) {
         Tags(app = app)
     }

@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -13,6 +14,7 @@ import androidx.paging.cachedIn
 import com.aurora.extensions.TAG
 import com.aurora.gplayapi.data.models.Review
 import com.aurora.gplayapi.helpers.ReviewsHelper
+import com.aurora.store.data.PageResult
 import com.aurora.store.data.paging.GenericPagingSource.Companion.manualPager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -46,7 +48,7 @@ class ReviewViewModel @AssistedInject constructor(
         var reviewsNextPageUrl: String? = null
 
         manualPager { page ->
-            try {
+            val items = try {
                 when (page) {
                     1 -> reviewsHelper.getReviews(packageName, filter).also {
                         reviewsNextPageUrl = it.nextPageUrl
@@ -66,6 +68,7 @@ class ReviewViewModel @AssistedInject constructor(
                 Log.e(TAG, "Failed to fetch reviews for $page: $reviewsNextPageUrl", exception)
                 emptyList()
             }
+            PageResult(items)
         }.flow.distinctUntilChanged()
             .cachedIn(viewModelScope)
             .onEach { _reviews.value = it }

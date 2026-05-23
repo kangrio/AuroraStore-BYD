@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: 2026 Aurora OSS
  * SPDX-FileCopyrightText: 2025 The Calyx Institute
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -7,16 +8,19 @@ package com.aurora.store.compose.ui.favourite
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -36,9 +40,11 @@ import com.aurora.extensions.emptyPagingItems
 import com.aurora.extensions.toast
 import com.aurora.store.R
 import com.aurora.store.compose.composable.ContainedLoadingIndicator
-import com.aurora.store.compose.composable.Error
 import com.aurora.store.compose.composable.FavouriteListItem
+import com.aurora.store.compose.composable.Placeholder
+import com.aurora.store.compose.composable.ScrollHint
 import com.aurora.store.compose.composable.TopAppBar
+import com.aurora.store.compose.navigation.Destination
 import com.aurora.store.compose.preview.FavouritePreviewProvider
 import com.aurora.store.compose.preview.ThemePreviewProvider
 import com.aurora.store.compose.ui.favourite.menu.FavouriteMenu
@@ -51,8 +57,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun FavouriteScreen(
-    onNavigateUp: () -> Unit,
-    onNavigateToAppDetails: (packageName: String) -> Unit,
+    onNavigateTo: (Destination) -> Unit,
     viewModel: FavouriteViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -84,8 +89,7 @@ fun FavouriteScreen(
 
     ScreenContent(
         favourites = favourites,
-        onNavigateUp = onNavigateUp,
-        onNavigateToAppDetails = onNavigateToAppDetails,
+        onNavigateTo = onNavigateTo,
         onRemoveFavourite = { packageName -> viewModel.removeFavourite(packageName) },
         onImportFavourites = {
             documentOpenLauncher.launch(arrayOf(JSON_MIME_TYPE))
@@ -101,8 +105,7 @@ fun FavouriteScreen(
 @Composable
 private fun ScreenContent(
     favourites: LazyPagingItems<Favourite> = emptyPagingItems(),
-    onNavigateUp: () -> Unit = {},
-    onNavigateToAppDetails: (packageName: String) -> Unit = {},
+    onNavigateTo: (Destination) -> Unit = {},
     onRemoveFavourite: (packageName: String) -> Unit = {},
     onImportFavourites: () -> Unit = {},
     onExportFavourites: () -> Unit = {}
@@ -117,7 +120,7 @@ private fun ScreenContent(
 
     @Composable
     fun SetupMenu() {
-        FavouriteMenu { menuItem ->
+        FavouriteMenu(items = favourites.itemCount) { menuItem ->
             when (menuItem) {
                 MenuItem.IMPORT -> onImportFavourites()
                 MenuItem.EXPORT -> onExportFavourites()
@@ -129,8 +132,7 @@ private fun ScreenContent(
         topBar = {
             TopAppBar(
                 title = stringResource(R.string.title_favourites_manager),
-                onNavigateUp = onNavigateUp,
-                actions = { if (favourites.itemCount != 0) SetupMenu() }
+                actions = { SetupMenu() }
             )
         }
     ) { paddingValues ->
@@ -138,7 +140,7 @@ private fun ScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(vertical = dimensionResource(R.dimen.padding_medium))
+                .padding(vertical = dimensionResource(R.dimen.spacing_medium))
         ) {
             when {
                 favourites.loadState.refresh is LoadState.Loading && initialLoad -> {
@@ -149,26 +151,39 @@ private fun ScreenContent(
                     initialLoad = false
 
                     if (favourites.itemCount == 0) {
-                        Error(
+                        Placeholder(
                             modifier = Modifier.padding(paddingValues),
                             painter = painterResource(R.drawable.ic_favorite_unchecked),
                             message = stringResource(R.string.details_no_favourites)
                         )
                     } else {
-                        LazyColumn {
-                            items(
-                                count = favourites.itemCount,
-                                key = favourites.itemKey { it.packageName }
-                            ) { index ->
-                                favourites[index]?.let { favourite ->
-                                    FavouriteListItem(
-                                        modifier = Modifier.animateItem(),
-                                        favourite = favourite,
-                                        onClick = { onNavigateToAppDetails(favourite.packageName) },
-                                        onClear = { onRemoveFavourite(favourite.packageName) }
-                                    )
+                        val listState = rememberLazyListState()
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            LazyColumn(
+                                state = listState
+                            ) {
+                                items(
+                                    count = favourites.itemCount,
+                                    key = favourites.itemKey { it.packageName }
+                                ) { index ->
+                                    favourites[index]?.let { favourite ->
+                                        FavouriteListItem(
+                                            modifier = Modifier.animateItem(),
+                                            favourite = favourite,
+                                            onClick = {
+                                                onNavigateTo(
+                                                    Destination.AppDetails(favourite.packageName)
+                                                )
+                                            },
+                                            onClear = { onRemoveFavourite(favourite.packageName) }
+                                        )
+                                    }
                                 }
                             }
+                            ScrollHint(
+                                listState = listState,
+                                modifier = Modifier.align(Alignment.BottomCenter)
+                            )
                         }
                     }
                 }
