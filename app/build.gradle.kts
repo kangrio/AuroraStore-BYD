@@ -293,3 +293,7 @@ dependencies {
     // LeakCanary
     debugImplementation(libs.squareup.leakcanary.android)
 }
+
+tasks.named("preBuild") {
+    dependsOn(":extension:buildExtension")
+}
