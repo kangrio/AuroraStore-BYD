@@ -32,15 +32,6 @@ jobs:
       - name: Grant execute permission
         run: chmod +x ./gradlew
 
-      - name: Build Extension classes
-        run: ./gradlew :extension:buildExtension
-
-      - name: Prepare raw folder
-        run: mkdir -p app/src/main/res/raw
-
-      - name: Copy extension to app
-        run: cp -rf extension/build/lib/classes app/src/main/res/raw/classes
-
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/keystore.jks
