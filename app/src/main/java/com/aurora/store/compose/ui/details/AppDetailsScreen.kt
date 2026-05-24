@@ -53,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import com.aurora.Constants
 import com.aurora.extensions.appInfo
+import com.aurora.extensions.isRAndAbove
 import com.aurora.extensions.requiresGMS
 import com.aurora.extensions.requiresObbDir
 import com.aurora.extensions.share
@@ -307,8 +308,12 @@ private fun ScreenContentApp(
         } else {
             val requiredPermissions = setOfNotNull(
                 PermissionType.INSTALL_UNKNOWN_APPS,
-                if (app.fileList.requiresObbDir()) PermissionType.STORAGE_MANAGER else null,
-                if (app.fileList.requiresObbDir() || BuildConfig.FLAVOR == Constants.FLAVOUR_BYD) PermissionType.EXTERNAL_STORAGE else null
+                if (app.fileList.requiresObbDir() || BuildConfig.FLAVOR == Constants.FLAVOUR_BYD) {
+                    when (isRAndAbove) {
+                        true -> PermissionType.STORAGE_MANAGER
+                        else -> PermissionType.EXTERNAL_STORAGE
+                    }
+                } else null
             )
             showExtraPane(Screen.PermissionRationale(requiredPermissions = requiredPermissions))
         }
