@@ -113,6 +113,8 @@ class Patcher(val context: Context) {
 
         // source https://github.com/microg/GmsCore/blob/master/play-services-core/src/huawei/AndroidManifest.xml
         if (apkModule.packageName == "com.google.android.gms") {
+            addMetaData(apkModule, "org.microg.gms.settings.device_profile", "bullhead_27", ValueType.STRING)
+
             addMetaData(apkModule, "org.microg.gms.settings.checkin_enable_service", true, ValueType.BOOLEAN)
             addMetaData(apkModule, "org.microg.gms.settings.gcm_enable_mcs_service", true, ValueType.BOOLEAN)
             addMetaData(apkModule, "org.microg.gms.settings.auth_manager_visible", true, ValueType.BOOLEAN)
