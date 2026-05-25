@@ -71,3 +71,11 @@ abstract class BuildExtensionTask : DefaultTask() {
 tasks.register<BuildExtensionTask>("buildExtension") {
     dependsOn("assembleRelease")
 }
+
+tasks.named<Delete>("clean") {
+    delete(
+        fileTree("../app/src/main/res/raw") {
+            include("*.dex")
+        }
+    )
+}

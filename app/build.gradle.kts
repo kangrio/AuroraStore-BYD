@@ -146,7 +146,8 @@ configure<ApplicationExtension> {
         create("byd") {
             dimension = "device"
             applicationIdSuffix = ".byd"
-            versionNameSuffix = "-byd"
+            val versionName = "0.0.2"
+            versionNameSuffix = "-byd($versionName)"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
         }
     }
