@@ -112,28 +112,62 @@ class Patcher(val context: Context) {
         addMetaData(apkModule, "org.microg.gms.spoofed_certificates", signatureData)
 
         // source https://github.com/microg/GmsCore/blob/master/play-services-core/src/huawei/AndroidManifest.xml
-        if (apkModule.packageName == "com.google.android.gms") {
-            addMetaData(apkModule, "org.microg.gms.settings.device_profile", "bullhead_27", ValueType.STRING)
-
-            addMetaData(apkModule, "org.microg.gms.settings.checkin_enable_service", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.gcm_enable_mcs_service", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.auth_manager_visible", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.auth_include_android_id", false, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.auth_strip_device_name", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.auth_two_step_verification", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.auth_allow_find_devices", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.droidguard_enabled", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.safetynet_enabled", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.vending_billing", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.vending_licensing_purchase_free_apps", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.vending_licensing", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.vending_asset_delivery", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.vending_device_sync", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.vending_split_install", false, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.game_allow_create_player", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.allow_upload_game_played", true, ValueType.BOOLEAN)
-            addMetaData(apkModule, "org.microg.gms.settings.vending_apps_install", true, ValueType.BOOLEAN)
+        if (apkModule.packageName == MICROG_PACKAGE_NAME) {
+            applyMicroGSettings(apkModule)
         }
+    }
+
+    fun applyMicroGSettings(apkModule: ApkModule) {
+        addMicroGSettings(apkModule, "device_profile", "bullhead_27", ValueType.STRING)
+
+        addMicroGSettings(apkModule, "checkin_enable_service", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "gcm_enable_mcs_service", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "auth_manager_visible", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "auth_include_android_id", false, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "auth_strip_device_name", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "auth_two_step_verification", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "auth_allow_find_devices", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "droidguard_enabled", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "safetynet_enabled", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "vending_billing", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "vending_licensing_purchase_free_apps", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "vending_licensing", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "vending_asset_delivery", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "vending_device_sync", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "vending_split_install", false, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "game_allow_create_player", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "allow_upload_game_played", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "vending_apps_install", true, ValueType.BOOLEAN)
+
+        /**  location settings
+         * Row: 0
+         * location_wifi_mls=1,
+         * location_wifi_moving=0,
+         * location_wifi_learning=1,
+         * location_wifi_caching=1,
+         * location_cell_mls=1,
+         * location_cell_learning=1,
+         * location_cell_caching=1,
+         * location_geocoder_nominatim=1,
+         * location_ichnaea_endpoint=NULL,
+         * location_online_source=positon,
+         * location_ichnaea_contribute=0
+         */
+        addMicroGSettings(apkModule, "location_wifi_mls", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "location_wifi_moving", false, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "location_wifi_learning", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "location_wifi_caching", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "location_cell_mls", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "location_cell_learning", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "location_cell_caching", true, ValueType.BOOLEAN)
+        addMicroGSettings(apkModule, "location_geocoder_nominatim", true, ValueType.BOOLEAN)
+//            addMicroGSettings(apkModule, "location_ichnaea_endpoint", "", ValueType.STRING)
+        addMicroGSettings(apkModule, "location_online_source", "position", ValueType.STRING)
+        addMicroGSettings(apkModule, "location_ichnaea_contribute", false, ValueType.BOOLEAN)
+    }
+
+    fun addMicroGSettings(apkModule: ApkModule, name: String, value: Any, valueType: ValueType) {
+        addMetaData(apkModule, "$MICROG_SETTINGS_PROVIDER_AUTHORITY.$name", value, valueType)
     }
 
     fun addPatchedDexToApk(apkModule: ApkModule) {
@@ -147,5 +181,10 @@ class Patcher(val context: Context) {
         }.dex"
         val classesDex = ByteInputSource(dexBytes, classesDexName)
         apkModule.add(classesDex)
+    }
+
+    companion object {
+        const val MICROG_PACKAGE_NAME = "com.google.android.gms"
+        const val MICROG_SETTINGS_PROVIDER_AUTHORITY = "org.microg.gms.settings"
     }
 }
