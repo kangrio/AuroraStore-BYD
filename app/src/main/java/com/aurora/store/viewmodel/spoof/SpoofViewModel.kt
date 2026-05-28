@@ -24,6 +24,7 @@ class SpoofViewModel @Inject constructor(
 
     val defaultLocale: Locale = Locale.getDefault()
     val defaultProperties = NativeDeviceInfoProvider.getNativeDeviceProperties(context)
+    val defaultAutomotiveSpoofedProperties = NativeDeviceInfoProvider.getNativeDeviceAutomotiveSpoofedProperties(context)
 
     private val _currentLocale = MutableStateFlow(spoofProvider.locale)
     val currentLocale = _currentLocale.asStateFlow()
