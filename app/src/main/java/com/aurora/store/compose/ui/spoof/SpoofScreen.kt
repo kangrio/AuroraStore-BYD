@@ -5,6 +5,9 @@
 
 package com.aurora.store.compose.ui.spoof
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -42,7 +45,9 @@ import com.aurora.store.compose.ui.spoof.menu.SpoofMenu
 import com.aurora.store.compose.ui.spoof.navigation.SpoofPage
 import com.aurora.store.data.providers.AccountProvider
 import com.aurora.store.viewmodel.spoof.SpoofViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 @Composable
 fun SpoofScreen(onNavigateTo: (Destination) -> Unit, viewModel: SpoofViewModel = hiltViewModel()) {
@@ -86,6 +91,16 @@ private fun ScreenContent(
         }
     )
 
+    fun restartApp(context: Context) {
+        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+        intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+        if (context is Activity) {
+            context.finish()
+        }
+        exitProcess(0)
+    }
+
     fun onRequestNavigateToSplash() {
         coroutineScope.launch {
             val result = snackBarHostState.showSnackbar(
@@ -97,6 +112,9 @@ private fun ScreenContent(
                 SnackbarResult.ActionPerformed -> {
                     AccountProvider.logout(context)
                     onNavigateTo(Destination.Splash)
+                    context.cacheDir.deleteRecursively()
+                    delay(100)
+                    restartApp(context)
                 }
 
                 else -> Unit
