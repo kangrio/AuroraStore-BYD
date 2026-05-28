@@ -25,7 +25,6 @@ import android.os.Build
 import androidx.core.content.getSystemService
 import com.aurora.extensions.isHuawei
 import java.util.Properties
-import com.aurora.store.util.Preferences
 
 object NativeDeviceInfoProvider {
 
@@ -110,8 +109,13 @@ object NativeDeviceInfoProvider {
         }
 
         if (isHuawei && !isExport) stripHuaweiProperties(properties)
-        if (Preferences.getBoolean(context, "pref_spoof_automotive_property", false)) stripAutomotiveProperties(properties)
 
+        return properties
+    }
+
+    fun getNativeDeviceAutomotiveSpoofedProperties(context: Context): Properties {
+        val properties = getNativeDeviceProperties(context)
+        stripAutomotiveProperties(properties)
         return properties
     }
 
@@ -145,8 +149,10 @@ object NativeDeviceInfoProvider {
 
     private fun stripAutomotiveProperties(properties: Properties) : Properties {
         val sharedLibraries = properties.getProperty("Features")
+        val userReadableName = properties.getProperty("UserReadableName")
         if (sharedLibraries.contains("android.hardware.type.automotive")) return properties
 
+        properties["UserReadableName"] = "$userReadableName (Automotive)"
         properties["Features"] = "$sharedLibraries,android.hardware.type.automotive"
         return properties
     }

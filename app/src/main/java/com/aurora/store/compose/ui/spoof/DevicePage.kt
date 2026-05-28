@@ -36,6 +36,7 @@ fun DevicePage(onRequestNavigateToSplash: () -> Unit, viewModel: SpoofViewModel 
     PageContent(
         devices = availableDevices,
         defaultDevice = viewModel.defaultProperties,
+        defaultAutomotiveSpoofedDevice = viewModel.defaultAutomotiveSpoofedProperties,
         isDeviceSelected = { device -> device == currentDevice },
         onDeviceSelected = { properties ->
             viewModel.onDeviceSelected(properties)
@@ -47,6 +48,7 @@ fun DevicePage(onRequestNavigateToSplash: () -> Unit, viewModel: SpoofViewModel 
 @Composable
 private fun PageContent(
     defaultDevice: Properties = Properties(),
+    defaultAutomotiveSpoofedDevice: Properties = Properties(),
     devices: List<Properties> = emptyList(),
     isDeviceSelected: (properties: Properties) -> Boolean = { false },
     onDeviceSelected: (properties: Properties) -> Unit = {}
@@ -63,7 +65,7 @@ private fun PageContent(
             }
         }
 
-        item {
+        items(items = listOf(defaultDevice, defaultAutomotiveSpoofedDevice)) { defaultDevice ->
             DeviceListItem(
                 userReadableName = defaultDevice.getProperty("UserReadableName"),
                 manufacturer = defaultDevice.getProperty("Build.MANUFACTURER"),
