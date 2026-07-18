@@ -80,20 +80,17 @@ public class SpoofUtil {
     private static PackageInfo spoofSignature(PackageInfo packageInfo, String signatureData) {
         byte[] signatureByte = Base64.decode(signatureData, Base64.DEFAULT);
         Signature signature = new Signature(signatureByte);
-        if (packageInfo.signatures != null && packageInfo.signatures.length > 0) {
-            packageInfo.signatures[0] = signature;
-        }
+        packageInfo.signatures = new Signature[]{ signature };
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (packageInfo.signingInfo != null) {
-                final CertificateFactory certFactory;
-                final Certificate cert;
-                try {
-                    certFactory = CertificateFactory.getInstance("X.509");
-                    cert = certFactory.generateCertificate(new ByteArrayInputStream(signatureByte));
-                    packageInfo.signingInfo = createSigningInfo(signature, cert.getPublicKey());
-                } catch (CertificateException e) {
-                    throw new RuntimeException(e);
-                }
+            final CertificateFactory certFactory;
+            final Certificate cert;
+            try {
+                certFactory = CertificateFactory.getInstance("X.509");
+                cert = certFactory.generateCertificate(new ByteArrayInputStream(signatureByte));
+                packageInfo.signingInfo = createSigningInfo(signature, cert.getPublicKey());
+            } catch (CertificateException e) {
+                throw new RuntimeException(e);
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -254,7 +251,7 @@ public class SpoofUtil {
                 if (packageInfo.packageName != null && needSpoof) {
                     Pair<Signature, SigningInfo> cache = mSignatureCache.get(packageInfo.packageName);
                     if (cache != null) {
-                        packageInfo.signatures[0] = cache.first;
+                        packageInfo.signatures = new Signature[]{ cache.first };
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             packageInfo.signingInfo = cache.second;
                         }
