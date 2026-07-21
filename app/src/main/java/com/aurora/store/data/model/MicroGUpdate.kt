@@ -3,15 +3,30 @@ package com.aurora.store.data.model
 import com.aurora.Constants.PACKAGE_NAME_GMS
 import com.aurora.Constants.PACKAGE_NAME_PLAY_STORE
 import com.aurora.gplayapi.data.models.PlayFile
+import com.aurora.gplayapi.data.serializers.LocaleSerializer
+import com.aurora.gplayapi.data.serializers.PropertiesSerializer
 import com.aurora.store.data.room.suite.ExternalApk
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.json.JSONObject
 
 class MicroGUpdate {
     companion object {
         private const val ICON_BASE_URL = "https://raw.githubusercontent.com/microg"
         private const val ICON_FILE_PATH = "src/main/res/mipmap-xxxhdpi/ic_app.png"
+
+        private val json: Json = Json {
+            prettyPrint = true
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+            serializersModule = SerializersModule {
+                contextual(LocaleSerializer)
+                contextual(PropertiesSerializer)
+            }
+            explicitNulls = false
+        }
 
         fun getLatestRelease(): GitHubRelease {
             val client = OkHttpClient()
@@ -27,31 +42,7 @@ class MicroGUpdate {
                 val response = client.newCall(request).execute()
                 val body = response.body.string()
 
-                val json = JSONObject(body)
-
-                val assetsJson = json.getJSONArray("assets")
-                val assets = mutableListOf<Asset>()
-
-                for (i in 0 until assetsJson.length()) {
-                    val a = assetsJson.getJSONObject(i)
-                    assets.add(
-                        Asset(
-                            name = a.getString("name"),
-                            browser_download_url = a.getString("browser_download_url"),
-                            size = a.getLong("size"),
-                            sha256 = a.getString("digest").removePrefix("sha256:")
-                        )
-                    )
-                }
-
-                return GitHubRelease(
-                    tag_name = json.getString("tag_name"),
-                    name = json.getString("name"),
-                    body = json.getString("body"),
-                    assets = assets,
-                    published_at = json.getString("published_at")
-                )
-
+                return json.decodeFromString<GitHubRelease>(body)
             } catch (e: Exception) {
                 e.printStackTrace()
                 return GitHubRelease("0", "0", "", emptyList(), "")
@@ -119,18 +110,3 @@ class MicroGUpdate {
         }
     }
 }
-
-data class GitHubRelease(
-    val tag_name: String,
-    val name: String,
-    val body: String,
-    val assets: List<Asset>,
-    val published_at: String
-)
-
-data class Asset(
-    val name: String,
-    val browser_download_url: String,
-    val size: Long,
-    val sha256: String
-)
