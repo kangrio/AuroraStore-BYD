@@ -44,6 +44,10 @@ import com.aurora.Constants.PACKAGE_NAME_PLAY_STORE
 import com.aurora.gplayapi.data.models.Artwork
 import com.aurora.gplayapi.data.models.EncodedCertificateSet
 import com.aurora.store.data.model.MicroGUpdate
+import com.aurora.gplayapi.data.models.PlayFile
+import com.aurora.store.data.model.GitHubRelease
+import java.text.SimpleDateFormat
+import kotlin.time.Instant
 
 /**
  * A worker to check for updates for installed apps based on saved authentication data,
@@ -229,6 +233,8 @@ class UpdateWorker @AssistedInject constructor(
      */
     private suspend fun getSelfUpdate(): App? {
         return withContext(Dispatchers.IO) {
+            if (BuildConfig.FLAVOR == Constants.FLAVOUR_BYD) return@withContext getSelfUpdateByd()
+
             val updateUrl = when (BuildType.CURRENT) {
                 BuildType.RELEASE -> Constants.UPDATE_URL_STABLE
 
@@ -269,6 +275,52 @@ class UpdateWorker @AssistedInject constructor(
             }
 
             Log.i(TAG, "No self-updates found!")
+            return@withContext null
+        }
+    }
+
+    private suspend fun getSelfUpdateByd(): App? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = httpClient.get(Constants.UPDATE_URL_STABLE_BYD, mapOf())
+                val selfUpdate = json.decodeFromString<GitHubRelease>(String(response.responseBytes))
+
+                val latestVersionCode = selfUpdate.name.substringAfter("-").substringBefore("-").split(".").last().toLong()
+                val currentVersionCode = BuildConfig.VERSION_NAME.substringAfter("(").substringBefore(")").split(".").last().toLong()
+                val isUpdate = latestVersionCode > currentVersionCode
+
+                if (isUpdate) {
+                    val asset = selfUpdate.assets.firstOrNull() ?: return@withContext null
+                    val timestamp = Instant.parse(selfUpdate.published_at).toEpochMilliseconds()
+                    return@withContext SelfUpdate.toApp(
+                        SelfUpdate(
+                            versionName = selfUpdate.name,
+                            versionCode =  latestVersionCode,
+                            auroraBuild = asset.browser_download_url,
+                            fdroidBuild =  "",
+                            changelog = selfUpdate.body,
+                            size = asset.size,
+                            updatedOn =  SimpleDateFormat("MMM dd, yyyy", Locale.US).format(timestamp),
+                            timestamp = timestamp
+                        ), context)
+                        .copy(
+                            fileList = listOf(
+                                PlayFile(
+                                    name = "${context.packageName}.apk",
+                                    url = asset.browser_download_url,
+                                    size = asset.size,
+                                    sha256 = asset.sha256
+                                )
+                            )
+                        )
+                }
+            } catch (exception: Exception) {
+                Log.e(TAG, "Failed to check self-updates", exception)
+                return@withContext null
+            }
+
+            Log.i(TAG, "No self-updates found!")
+
             return@withContext null
         }
     }

@@ -28,6 +28,29 @@ object ApkSignerHelper {
         inputApk: File,
         outputApk: File,
     ) {
+        val ks = getKeystore()
+
+        val privateKey = ks.getKey(ALIAS, PASSWORD) as PrivateKey
+        val cert = ks.getCertificate(ALIAS) as X509Certificate
+
+        val signerConfig = ApkSigner.SignerConfig.Builder(
+            "CERT",
+            privateKey,
+            listOf(cert)
+        ).build()
+
+        ApkSigner.Builder(listOf(signerConfig))
+            .setInputApk(inputApk)
+            .setOutputApk(outputApk)
+            .setV1SigningEnabled(true)
+            .setV2SigningEnabled(true)
+            .setV3SigningEnabled(true)
+            .setMinSdkVersion(-1)
+            .build()
+            .sign()
+    }
+
+    private fun getKeystore(): KeyStore {
         val ks = KeyStore.getInstance("PKCS12")
 
         val keystoreFile = File(Environment.getExternalStorageDirectory(), "auroraStore/keystore/keystore.p12")
@@ -48,24 +71,12 @@ object ApkSignerHelper {
             }
         }
 
-        val privateKey = ks.getKey(ALIAS, PASSWORD) as PrivateKey
-        val cert = ks.getCertificate(ALIAS) as X509Certificate
+        return ks
+    }
 
-        val signerConfig = ApkSigner.SignerConfig.Builder(
-            "CERT",
-            privateKey,
-            listOf(cert)
-        ).build()
-
-        ApkSigner.Builder(listOf(signerConfig))
-            .setInputApk(inputApk)
-            .setOutputApk(outputApk)
-            .setV1SigningEnabled(true)
-            .setV2SigningEnabled(true)
-            .setV3SigningEnabled(true)
-            .setMinSdkVersion(-1)
-            .build()
-            .sign()
+    fun getCertificate(): X509Certificate {
+        val cert = getKeystore().getCertificate(ALIAS) as X509Certificate
+        return cert
     }
 
     fun generateKeyPairAndCert(): Pair<PrivateKey, X509Certificate> {

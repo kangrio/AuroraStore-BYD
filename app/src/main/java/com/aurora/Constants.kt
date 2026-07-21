@@ -75,4 +75,5 @@ object Constants {
     const val FLAVOUR_HUAWEI = "huawei"
     const val FLAVOUR_PRELOAD = "preload"
     const val FLAVOUR_BYD = "byd"
+    const val UPDATE_URL_STABLE_BYD = "https://api.github.com/repos/kangrio/AuroraStore-BYD/releases/latest"
 }

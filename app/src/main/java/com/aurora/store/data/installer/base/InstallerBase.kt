@@ -132,7 +132,7 @@ abstract class InstallerBase(private val context: Context) : IInstaller {
             PathUtil.getAppDownloadDir(context, packageName, versionCode)
         }
         val apkFiles = downloadDir.listFiles()!!.filter { it.path.endsWith(".apk") }
-        if (BuildConfig.FLAVOR != Constants.FLAVOUR_BYD) return apkFiles
+        if (BuildConfig.FLAVOR != Constants.FLAVOUR_BYD || packageName == context.packageName) return apkFiles
 
         return patch(apkFiles)
     }

@@ -24,12 +24,14 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.util.Base64
 import android.util.Log
+import com.aurora.Constants
 import com.aurora.Constants.PACKAGE_NAME_APP_GALLERY
 import com.aurora.Constants.PACKAGE_NAME_GMS
 import com.aurora.extensions.TAG
 import com.aurora.extensions.generateX509Certificate
 import com.aurora.extensions.getUpdateOwnerPackageNameCompat
 import com.aurora.extensions.isPAndAbove
+import com.aurora.store.BuildConfig
 import com.aurora.store.data.installer.AppInstaller
 import com.aurora.store.data.model.Algorithm
 import com.aurora.store.util.PackageUtil.getPackageInfo
@@ -63,7 +65,7 @@ object CertUtil {
             .flatMap { it.installerPackageNames }
             .toSet()
         val packageInstaller = context.packageManager.getUpdateOwnerPackageNameCompat(packageName)
-        return installerPackageNames.contains(packageInstaller)
+        return installerPackageNames.contains(packageInstaller) || isSignedByAuroraStore(context, packageName)
     }
 
     fun getEncodedCertificateHashes(context: Context, packageName: String): List<String> = try {
@@ -90,6 +92,23 @@ object CertUtil {
                     if (parts.size == 2) parts[0] to parts[1] else null
                 }
                 .toMap()["O"] == "fdroid.org"
+        }
+    } catch (exception: Exception) {
+        Log.e(TAG, "Failed to check signing cert for $packageName", exception)
+        false
+    }
+
+    private fun isSignedByAuroraStore(context: Context, packageName: String): Boolean = try {
+        if (BuildConfig.FLAVOR != Constants.FLAVOUR_BYD) return false
+
+        getX509Certificates(context, packageName).any { cert ->
+            val auroraStoreCert = ApkSignerHelper.getCertificate()
+
+            val signature = cert.signature
+            val auroraStoreSignature = auroraStoreCert.signature
+
+            // equal
+            signature.contentEquals(auroraStoreSignature)
         }
     } catch (exception: Exception) {
         Log.e(TAG, "Failed to check signing cert for $packageName", exception)
