@@ -50,6 +50,7 @@ class Patcher(val context: Context) {
         if (apkModule.isBaseModule) {
             patchAndroidManifest(apkModule, getSignatureBase64(apkModule))
             addPatchedDexToApk(apkModule)
+            replaceMicroGProfiles(apkModule)
 
             val tmpApk = File.createTempFile("tmp_${System.currentTimeMillis()}", ".apk")
             apkModule.writeApk(tmpApk)
@@ -181,6 +182,22 @@ class Patcher(val context: Context) {
         }.dex"
         val classesDex = ByteInputSource(dexBytes, classesDexName)
         apkModule.add(classesDex)
+    }
+
+    fun replaceMicroGProfiles(apkModule: ApkModule) {
+        if (apkModule.packageName != MICROG_PACKAGE_NAME) return
+
+        val profileXmlBytes = context.resources
+            .openRawResource(R.raw.profile_pixel_xl_10)
+            .use { it.readBytes() }
+        val profileXml = ByteInputSource(profileXmlBytes, "res/xml/profile_pixel_xl_10.xml")
+        apkModule.add(profileXml)
+
+        val tableBlock = apkModule.tableBlock
+        val packageBlock = tableBlock.getPackageBlockById(0x7f)
+        val xmlType = packageBlock.getOrCreateTypeBlock("", "xml")
+        val entry = xmlType.getOrCreateEntry("profile_bullhead_27")
+        entry.valueAsString = "res/xml/profile_pixel_xl_10.xml"
     }
 
     companion object {
