@@ -41,6 +41,8 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.patch.UpdateWorkerPatch
 
 /**
  * A worker that drives periodic app-update checks. The repeat interval is configurable
@@ -233,6 +235,7 @@ class UpdateWorker @AssistedInject constructor(
             } else {
                 updateDao.delete(context.packageName)
             }
+            UpdateWorkerPatch.getMicroGUpdate(context)?.let { updates.addAll(it) }
 
             return@withContext updates.map {
                 Update.fromApp(
@@ -251,7 +254,7 @@ class UpdateWorker @AssistedInject constructor(
      * code. Best-effort: any failure logs and yields no update.
      */
     private suspend fun getSelfUpdate(): App? = withContext(Dispatchers.IO) {
-        val updateUrl = when (BuildType.CURRENT) {
+        var updateUrl = when (BuildType.CURRENT) {
             BuildType.RELEASE -> Constants.UPDATE_URL_VANILLA
             BuildType.NIGHTLY -> Constants.UPDATE_URL_NIGHTLY
             else -> {
@@ -259,16 +262,22 @@ class UpdateWorker @AssistedInject constructor(
                 return@withContext null
             }
         }
+        if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+            updateUrl = ConstantsPatch.UPDATE_URL_VANILLA_BYD
+        }
 
         try {
             val selfUpdate = httpClient.call(updateUrl).use {
                 json.decodeFromString<SelfUpdate>(it.body.string())
             }
 
-            val isNewer = when (BuildType.CURRENT) {
+            var isNewer = when (BuildType.CURRENT) {
                 BuildType.RELEASE -> selfUpdate.versionCode > BuildConfig.VERSION_CODE
                 BuildType.NIGHTLY -> selfUpdate.timestamp > BuildConfig.BUILD_TIMESTAMP
                 else -> false
+            }
+            if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+                isNewer = selfUpdate.timestamp > BuildConfig.BUILD_TIMESTAMP
             }
 
             if (isNewer && selfUpdate.downloadUrl.isNotBlank()) {

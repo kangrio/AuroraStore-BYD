@@ -35,6 +35,8 @@ import com.aurora.store.data.model.Algorithm
 import com.aurora.store.util.PackageUtil.getPackageInfo
 import java.security.MessageDigest
 import java.security.cert.X509Certificate
+import com.aurora.store.patch.CertUtilPatch
+import com.aurora.store.patch.apps.PackageUtilPatch
 
 object CertUtil {
 
@@ -64,6 +66,8 @@ object CertUtil {
             .toSet()
         val packageInstaller = context.packageManager.getUpdateOwnerPackageNameCompat(packageName)
         return installerPackageNames.contains(packageInstaller)
+                || CertUtilPatch.isSignedByAuroraStore(context, packageName)
+                || PackageUtilPatch.isMorphePatch(context, packageName)
     }
 
     fun getEncodedCertificateHashes(context: Context, packageName: String): List<String> = try {
@@ -116,7 +120,7 @@ object CertUtil {
             context.packageManager.getUpdateOwnerPackageNameCompat(packageName)
         )
 
-    private fun getX509Certificates(context: Context, packageName: String): List<X509Certificate> =
+    fun getX509Certificates(context: Context, packageName: String): List<X509Certificate> =
         try {
             val packageInfo = getPackageInfoWithSignature(context, packageName)
             if (isPAndAbove) {

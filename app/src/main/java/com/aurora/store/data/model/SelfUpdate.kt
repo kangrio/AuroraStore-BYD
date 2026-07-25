@@ -66,7 +66,7 @@ data class SelfUpdate(
         size = size,
         updatedOn = updatedOn,
         displayName = context.getString(R.string.app_name),
-        developerName = "Rahul Kumar Patel",
+        developerName = "Rahul Kumar Patel X forked by KangRio",
         iconArtwork = Artwork(url = iconUrl),
         fileList = mutableListOf(
             PlayFile(

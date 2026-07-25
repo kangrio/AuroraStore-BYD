@@ -98,7 +98,7 @@ object Preferences {
     private var prefs: SharedPreferences? = null
 
     fun getPrefs(context: Context): SharedPreferences = when (BuildConfig.FLAVOR) {
-        "vanilla" -> {
+        "vanilla", "byd" -> {
             prefs ?: PreferenceManager.getDefaultSharedPreferences(context).also { prefs = it }
         }
 

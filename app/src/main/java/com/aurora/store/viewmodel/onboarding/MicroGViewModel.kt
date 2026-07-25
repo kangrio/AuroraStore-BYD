@@ -34,6 +34,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import com.aurora.store.BuildConfig
+import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.patch.apps.update.MicroGUpdate
 
 data class MicroGUIState(
     val items: List<ExternalItem> = emptyList(),
@@ -110,7 +113,7 @@ class MicroGViewModel @Inject constructor(
         )
     )
 
-    private val bundle = listOf(microGServiceApk, microGCompanionApk)
+    private var bundle = listOf(microGServiceApk, microGCompanionApk)
 
     init {
         AuroraApp.events.installerEvent.onEach { event ->
@@ -144,6 +147,9 @@ class MicroGViewModel @Inject constructor(
 
     fun downloadMicroG() {
         viewModelScope.launch(Dispatchers.IO) {
+            if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+                bundle = MicroGUpdate.getLatestVersionBundle()
+            }
             bundle.forEach { enqueueIfNeeded(it) }
         }
     }

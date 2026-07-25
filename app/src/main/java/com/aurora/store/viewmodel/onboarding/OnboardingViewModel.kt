@@ -47,6 +47,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import com.aurora.store.patch.ConstantsPatch
 
 data class OnboardingUiState(
     val isMicroBundleChecked: Boolean = false,
@@ -85,6 +86,13 @@ class OnboardingViewModel @Inject constructor(
         if (BuildConfig.FLAVOR == FLAVOUR_HUAWEI) {
             blacklistProvider.blacklist(PACKAGE_NAME_GMS)
             blacklistProvider.blacklist(PACKAGE_NAME_PLAY_STORE)
+        }
+
+        if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+            blacklistProvider.blacklist(PACKAGE_NAME_GMS)
+            blacklistProvider.blacklist(PACKAGE_NAME_PLAY_STORE)
+            context.save(PREFERENCE_UPDATES_EXTENDED, true)
+            context.save(PREFERENCE_FILTER_AURORA_ONLY, true)
         }
 
         setupAutoUpdates()

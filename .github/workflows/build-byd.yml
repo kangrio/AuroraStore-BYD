@@ -1,0 +1,116 @@
+name: Build BYD APK
+
+on:
+  push:
+    branches:
+      - 'release/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Fix gradlew line endings
+        run: sed -i 's/\r$//' gradlew
+
+      - name: Grant execute permission
+        run: chmod +x ./gradlew
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/keystore.jks
+      - name: Create signing.properties
+        run: |
+          echo "STORE_FILE=keystore.jks" >> app/signing.properties
+          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> app/signing.properties
+          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> app/signing.properties
+      - name: Build Release APK
+        run: ./gradlew :app:assembleBydRelease
+
+      - name: Get APK path
+        id: apk-path
+        run: |
+          APK=$(find app/build/outputs/apk -name '*byd*release*.apk' | head -n 1)
+          if [ -z "$APK" ]; then
+            echo "APK not found"
+            exit 1
+          fi
+          echo "path=$APK" >> $GITHUB_OUTPUT
+          echo "APK: $APK"
+
+      - name: Get APK info
+        id: apk-info
+        uses: hkusu/apk-info-action@v1
+        with:
+          apk-path: ${{ steps.apk-path.outputs.path }}
+
+      - name: Get last commit message
+        id: commit
+        run: |
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          git log -1 --pretty=%B >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate release_feed.json
+        env:
+          COMMIT_MSG: ${{ steps.commit.outputs.message }}
+          VERSION_NAME: ${{ steps.apk-info.outputs.version-name }}
+          VERSION_CODE: ${{ steps.apk-info.outputs.version-code }}
+          FILE_SIZE: ${{ steps.apk-info.outputs.file-size }}
+        run: |
+          SHA256=$(sha256sum "${{ steps.apk-path.outputs.path }}" | awk '{print $1}')
+          TS=$(date +%s)
+          UPDATED_ON=$(date +"%b %d, %Y")
+          LAST_COMMIT=$(git log -1 --pretty=%h)
+          
+          jq -n \
+            --arg version_name "$VERSION_NAME" \
+            --arg version_code "$VERSION_CODE" \
+            --arg sha256 "$SHA256" \
+            --arg changelog "$COMMIT_MSG" \
+            --arg size "$FILE_SIZE" \
+            --arg last_commit "$LAST_COMMIT" \
+            --arg updated_on "$UPDATED_ON" \
+            --arg timestamp "$TS" \
+            --arg download_url "https://github.com/kangrio/AuroraStore-BYD/releases/latest/download/app-byd-release.apk" \
+            --arg icon_url "https://raw.githubusercontent.com/kangrio/AuroraStore-BYD/refs/heads/master/app/src/main/res/mipmap-hdpi/ic_launcher.png" \
+            '{version_name:$version_name, version_code:$version_code, download_url:$download_url, sha256:$sha256, icon_url:$icon_url, changelog:$changelog, size:$size, last_commit:$last_commit, updated_on:$updated_on, timestamp:$timestamp}' \
+            > release_feed.json
+          cat release_feed.json
+
+      - name: Generate tag
+        id: tag
+        run: |
+          BRANCH="${GITHUB_REF_NAME#release/}"
+          BRANCH="${BRANCH//\//-}"
+          
+          TAG="byd-${BRANCH}-$(date +'%Y%m%d')"
+          
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.TAG }}
+          name: ${{ steps.tag.outputs.TAG }}
+          body: ${{ steps.commit.outputs.message }}
+          files: |
+            ${{ steps.apk-path.outputs.path }}
+            release_feed.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

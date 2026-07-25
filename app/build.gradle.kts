@@ -79,10 +79,10 @@ configure<ApplicationExtension> {
     }
 
     signingConfigs {
-        if (File("signing.properties").exists()) {
+        if (file("signing.properties").exists()) {
             create("release") {
                 val properties = Properties().apply {
-                    File("signing.properties").inputStream().use { load(it) }
+                    file("signing.properties").inputStream().use { load(it) }
                 }
 
                 keyAlias = properties["KEY_ALIAS"] as String
@@ -109,7 +109,7 @@ configure<ApplicationExtension> {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            if (File("signing.properties").exists()) {
+            if (file("signing.properties").exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
@@ -147,6 +147,16 @@ configure<ApplicationExtension> {
             versionNameSuffix = "-preload"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
         }
+
+        // This flavor is only for aosp devices without rooted devices make support for microG
+        create("byd") {
+            dimension = "device"
+            applicationIdSuffix = ".byd"
+            val bydVersionCode = 5
+            val bydVersionName = "byd(0.0.$bydVersionCode)"
+            versionNameSuffix = "-$bydVersionName"
+            buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
+        }
     }
 
     buildFeatures {
@@ -161,6 +171,12 @@ configure<ApplicationExtension> {
 
     androidResources {
         generateLocaleConfig = true
+    }
+
+    packaging {
+        resources {
+            excludes.add("org/bouncycastle/pqc/crypto/picnic/*.properties")
+        }
     }
 
     dependenciesInfo {
@@ -188,6 +204,10 @@ ktlint {
 }
 
 dependencies {
+    // patcher
+    implementation(files("libs/ARSCLib-1.3.8.jar"))
+    implementation("com.android.tools.build:apksig:8.8.0")
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
 
     // Google's Goodies
     implementation(libs.google.android.material)
@@ -276,4 +296,8 @@ dependencies {
 
     // LeakCanary
     debugImplementation(libs.squareup.leakcanary.android)
+}
+
+tasks.named("preBuild") {
+    dependsOn(":extension:buildExtension")
 }
