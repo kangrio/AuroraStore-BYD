@@ -264,7 +264,7 @@ class UpdateWorker @AssistedInject constructor(
             }
         }
         if (UtilPatch.isBydFLAVOUR()) {
-            updateUrl = ConstantsPatch.UPDATE_URL_VANILLA_BYD
+            updateUrl = UtilPatch.getGithubRepoUrl() ?: updateUrl
         }
 
         try {
