@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 object UtilPatch {
-    fun isBydFLAVOUR(): Boolean {
+    fun isBydFlavour(): Boolean {
         return BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD
     }
 
