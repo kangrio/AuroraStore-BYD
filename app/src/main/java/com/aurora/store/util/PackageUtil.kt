@@ -52,7 +52,7 @@ import com.aurora.store.BuildConfig
 import com.aurora.store.R
 import com.aurora.store.data.model.BuildType
 import java.util.Locale
-import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.patch.UtilPatch
 import com.aurora.store.patch.apps.PackageUtilPatch
 
 object PackageUtil {
@@ -182,7 +182,7 @@ object PackageUtil {
 
     fun isUpdatable(context: Context, packageName: String, versionCode: Long): Boolean {
         return try {
-            if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+            if (UtilPatch.isBydFLAVOUR()) {
                 return PackageUtilPatch.isUpdatable(context, packageName, versionCode)
             }
             val packageInfo = getPackageInfo(context, packageName)
@@ -199,7 +199,7 @@ object PackageUtil {
      */
     fun isSelfUpdateSupported(context: Context): Boolean {
         val flavorEligible = BuildConfig.FLAVOR == FLAVOUR_VANILLA ||
-            BuildConfig.FLAVOR == FLAVOUR_PRELOAD || BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD
+            BuildConfig.FLAVOR == FLAVOUR_PRELOAD || UtilPatch.isBydFLAVOUR()
         return flavorEligible &&
             BuildType.CURRENT != BuildType.DEBUG &&
             !CertUtil.isFDroidApp(context, BuildConfig.APPLICATION_ID)

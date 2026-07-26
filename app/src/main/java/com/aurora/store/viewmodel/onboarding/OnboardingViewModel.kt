@@ -47,7 +47,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.patch.UtilPatch
 
 data class OnboardingUiState(
     val isMicroBundleChecked: Boolean = false,
@@ -88,7 +88,7 @@ class OnboardingViewModel @Inject constructor(
             blacklistProvider.blacklist(PACKAGE_NAME_PLAY_STORE)
         }
 
-        if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+        if (UtilPatch.isBydFLAVOUR()) {
             blacklistProvider.blacklist(PACKAGE_NAME_GMS)
             blacklistProvider.blacklist(PACKAGE_NAME_PLAY_STORE)
             context.save(PREFERENCE_UPDATES_EXTENDED, true)

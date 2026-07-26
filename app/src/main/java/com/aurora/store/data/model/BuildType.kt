@@ -2,6 +2,7 @@ package com.aurora.store.data.model
 
 import com.aurora.store.BuildConfig
 import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.patch.UtilPatch
 
 /**
  * Class representing build types for Aurora Store
@@ -12,7 +13,7 @@ enum class BuildType(var packageName: String) {
     DEBUG("com.aurora.store.debug");
 
     init {
-        if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+        if (UtilPatch.isBydFLAVOUR()) {
             packageName = packageName.replace("com.aurora.store", ConstantsPatch.FLAVOUR_BYD_PACKAGE_NAME)
         }
     }
