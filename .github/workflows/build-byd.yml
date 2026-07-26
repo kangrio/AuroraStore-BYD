@@ -85,7 +85,7 @@ jobs:
           FILE_SIZE: ${{ steps.apk-info.outputs.file-size }}
         run: |
           SHA256=$(sha256sum "${{ steps.apk-path.outputs.path }}" | awk '{print $1}')
-          TS=$(date +%s)
+          TS=$(git log -1 --format=%ct)
           UPDATED_ON=$(date +"%b %d, %Y")
           LAST_COMMIT=$(git log -1 --pretty=%h)
           REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
