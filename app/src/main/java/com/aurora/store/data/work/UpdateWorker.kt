@@ -41,8 +41,8 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import com.aurora.store.patch.ConstantsPatch
 import com.aurora.store.patch.UpdateWorkerPatch
+import com.aurora.store.patch.UtilPatch
 
 /**
  * A worker that drives periodic app-update checks. The repeat interval is configurable
@@ -262,8 +262,8 @@ class UpdateWorker @AssistedInject constructor(
                 return@withContext null
             }
         }
-        if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
-            updateUrl = ConstantsPatch.UPDATE_URL_VANILLA_BYD
+        if (UtilPatch.isBydFlavour()) {
+            updateUrl = UtilPatch.getGithubRepoUrl() ?: updateUrl
         }
 
         try {
@@ -276,7 +276,7 @@ class UpdateWorker @AssistedInject constructor(
                 BuildType.NIGHTLY -> selfUpdate.timestamp > BuildConfig.BUILD_TIMESTAMP
                 else -> false
             }
-            if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+            if (UtilPatch.isBydFlavour()) {
                 isNewer = selfUpdate.timestamp > BuildConfig.BUILD_TIMESTAMP
             }
 

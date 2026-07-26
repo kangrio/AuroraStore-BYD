@@ -4,6 +4,7 @@ import android.content.Context
 import com.aurora.store.patch.apps.ExternalAppsPatch
 import com.aurora.store.patch.util.ApkSignerHelper
 import com.aurora.store.patch.util.Patcher
+import com.aurora.store.util.PackageUtil
 import java.io.File
 
 object InstallerBasePatch {
@@ -14,23 +15,14 @@ object InstallerBasePatch {
     ): List<File> {
         if (packageName == context.packageName) return files
         if (packageName in ExternalAppsPatch.apps) {
-            val isSignedByAuroraStore = CertUtilPatch.isSignedByAuroraStore(context, packageName)
-            if (!isSignedByAuroraStore) return files
+            val needSign = !PackageUtil.isInstalled(context, packageName) || CertUtilPatch.isSignedByAuroraStore(context, packageName)
+            if (!needSign) return files
 
-            return files.map { file ->
-                val parent = file.parentFile!!
-                val tmp = File.createTempFile("tmp_", ".apk", parent)
-                val signed = File.createTempFile("signed_", ".apk", parent)
-
-                try {
-                    file.copyTo(tmp, overwrite = true)
-                    ApkSignerHelper.signApk(context, tmp, signed)
-                    signed.copyTo(file, overwrite = true)
+            return files.mapNotNull { file ->
+                runCatching {
+                    ApkSignerHelper.signApk(context, file, file)
                     file
-                } finally {
-                    tmp.delete()
-                    signed.delete()
-                }
+                }.getOrNull()
             }
         }
 

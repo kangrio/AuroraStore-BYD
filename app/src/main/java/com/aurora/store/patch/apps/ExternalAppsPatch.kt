@@ -7,6 +7,7 @@ import com.aurora.gplayapi.data.serializers.PropertiesSerializer
 import com.aurora.store.patch.data.GitHubRelease
 import com.aurora.store.data.room.download.Download
 import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.util.PackageUtil
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
@@ -59,7 +60,8 @@ object ExternalAppsPatch {
     }
 
     fun get(context: Context, download: Download): List<PlayFile> {
-        if (!PackageUtilPatch.isMorphePatch(context, download.packageName)) return download.fileList
+        if (PackageUtil.isInstalled(context, download.packageName) &&
+            !PackageUtilPatch.isMorphePatch(context, download.packageName)) return download.fileList
 
         val name = apps[download.packageName] ?: return download.fileList
         val githubRelease = getLatestRelease()

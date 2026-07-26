@@ -69,9 +69,8 @@ import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
-import com.aurora.store.BuildConfig
-import com.aurora.store.patch.ConstantsPatch
 import com.aurora.store.patch.apps.ExternalAppsPatch
+import com.aurora.store.patch.UtilPatch
 
 /**
  * An expedited long-running worker to download and trigger installation for given apps.
@@ -206,7 +205,7 @@ class DownloadWorker @AssistedInject constructor(
                 return onFailure(exception)
             }
         }
-        if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+        if (UtilPatch.isBydFlavour()) {
             download.fileList = ExternalAppsPatch.get(context, download)
         }
         files.addAll(download.fileList)

@@ -3,6 +3,7 @@ package com.aurora.store.patch
 import android.content.Context
 import android.util.Log
 import com.aurora.Constants
+import com.aurora.extensions.TAG
 import com.aurora.gplayapi.data.models.App
 import com.aurora.gplayapi.data.models.Artwork
 import com.aurora.gplayapi.data.models.EncodedCertificateSet
@@ -13,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object UpdateWorkerPatch {
-    const val TAG = "UpdateWorkerPatch"
     suspend fun getMicroGUpdate(context: Context): List<App>? {
         return withContext(Dispatchers.IO) {
             val updates = mutableListOf<App>()

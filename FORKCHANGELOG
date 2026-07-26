@@ -1,0 +1,4 @@
+Changelog : v0.0.6
+• Synced with the latest upstream changes from AuroraStore (3ef392f)
+• Implemented fallback for YouTube and YouTube Music to use prebuilt Morphe-patched APK files
+• fixed Youtube app stuck buffering at 1 minute (need uninstall old and reinstall)

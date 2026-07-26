@@ -35,8 +35,8 @@ import com.aurora.store.util.PathUtil
 import com.aurora.store.util.Preferences
 import com.aurora.store.util.Preferences.PREFERENCE_AUTO_DELETE
 import java.io.File
-import com.aurora.store.patch.ConstantsPatch
 import com.aurora.store.patch.InstallerBasePatch
+import com.aurora.store.patch.UtilPatch
 
 abstract class InstallerBase(private val context: Context) : IInstaller {
 
@@ -125,7 +125,7 @@ abstract class InstallerBase(private val context: Context) : IInstaller {
         }
         return downloadDir.listFiles()!!.filter { it.path.endsWith(".apk") }
             .let {
-            if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+            if (UtilPatch.isBydFlavour()) {
                 InstallerBasePatch.getFiles(context, packageName, it)
             } else {
                 it

@@ -34,8 +34,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import com.aurora.store.BuildConfig
-import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.patch.UtilPatch
 import com.aurora.store.patch.apps.update.MicroGUpdate
 
 data class MicroGUIState(
@@ -147,7 +146,7 @@ class MicroGViewModel @Inject constructor(
 
     fun downloadMicroG() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (BuildConfig.FLAVOR == ConstantsPatch.FLAVOUR_BYD) {
+            if (UtilPatch.isBydFlavour()) {
                 bundle = MicroGUpdate.getLatestVersionBundle()
             }
             bundle.forEach { enqueueIfNeeded(it) }
