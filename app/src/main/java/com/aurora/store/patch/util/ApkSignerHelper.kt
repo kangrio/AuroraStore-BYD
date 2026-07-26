@@ -28,25 +28,31 @@ object ApkSignerHelper {
         outputApk: File,
     ) {
         val ks = getKeystore(context)
+        val signed = File.createTempFile("signed_", ".apk")
 
-        val privateKey = ks.getKey(ALIAS, PASSWORD) as PrivateKey
-        val cert = ks.getCertificate(ALIAS) as X509Certificate
+        try {
+            val privateKey = ks.getKey(ALIAS, PASSWORD) as PrivateKey
+            val cert = ks.getCertificate(ALIAS) as X509Certificate
 
-        val signerConfig = ApkSigner.SignerConfig.Builder(
-            "CERT",
-            privateKey,
-            listOf(cert)
-        ).build()
+            val signerConfig = ApkSigner.SignerConfig.Builder(
+                "CERT",
+                privateKey,
+                listOf(cert)
+            ).build()
 
-        ApkSigner.Builder(listOf(signerConfig))
-            .setInputApk(inputApk)
-            .setOutputApk(outputApk)
-            .setV1SigningEnabled(true)
-            .setV2SigningEnabled(true)
-            .setV3SigningEnabled(true)
-            .setMinSdkVersion(-1)
-            .build()
-            .sign()
+            ApkSigner.Builder(listOf(signerConfig))
+                .setInputApk(inputApk)
+                .setOutputApk(signed)
+                .setV1SigningEnabled(true)
+                .setV2SigningEnabled(true)
+                .setV3SigningEnabled(true)
+                .setMinSdkVersion(-1)
+                .build()
+                .sign()
+            signed.copyTo(outputApk, overwrite = true)
+        } finally {
+            signed.delete()
+        }
     }
 
     private fun getKeystore(context: Context): KeyStore {
