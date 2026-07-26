@@ -88,7 +88,7 @@ class OnboardingViewModel @Inject constructor(
             blacklistProvider.blacklist(PACKAGE_NAME_PLAY_STORE)
         }
 
-        if (UtilPatch.isBydFLAVOUR()) {
+        if (UtilPatch.isBydFlavour()) {
             blacklistProvider.blacklist(PACKAGE_NAME_GMS)
             blacklistProvider.blacklist(PACKAGE_NAME_PLAY_STORE)
             context.save(PREFERENCE_UPDATES_EXTENDED, true)

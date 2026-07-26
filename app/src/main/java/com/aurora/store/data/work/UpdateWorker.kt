@@ -41,7 +41,6 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import com.aurora.store.patch.ConstantsPatch
 import com.aurora.store.patch.UpdateWorkerPatch
 import com.aurora.store.patch.UtilPatch
 
@@ -263,7 +262,7 @@ class UpdateWorker @AssistedInject constructor(
                 return@withContext null
             }
         }
-        if (UtilPatch.isBydFLAVOUR()) {
+        if (UtilPatch.isBydFlavour()) {
             updateUrl = UtilPatch.getGithubRepoUrl() ?: updateUrl
         }
 
@@ -277,7 +276,7 @@ class UpdateWorker @AssistedInject constructor(
                 BuildType.NIGHTLY -> selfUpdate.timestamp > BuildConfig.BUILD_TIMESTAMP
                 else -> false
             }
-            if (UtilPatch.isBydFLAVOUR()) {
+            if (UtilPatch.isBydFlavour()) {
                 isNewer = selfUpdate.timestamp > BuildConfig.BUILD_TIMESTAMP
             }
 

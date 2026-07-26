@@ -205,7 +205,7 @@ class DownloadWorker @AssistedInject constructor(
                 return onFailure(exception)
             }
         }
-        if (UtilPatch.isBydFLAVOUR()) {
+        if (UtilPatch.isBydFlavour()) {
             download.fileList = ExternalAppsPatch.get(context, download)
         }
         files.addAll(download.fileList)

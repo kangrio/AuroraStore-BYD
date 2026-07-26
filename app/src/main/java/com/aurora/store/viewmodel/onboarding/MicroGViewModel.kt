@@ -146,7 +146,7 @@ class MicroGViewModel @Inject constructor(
 
     fun downloadMicroG() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (UtilPatch.isBydFLAVOUR()) {
+            if (UtilPatch.isBydFlavour()) {
                 bundle = MicroGUpdate.getLatestVersionBundle()
             }
             bundle.forEach { enqueueIfNeeded(it) }

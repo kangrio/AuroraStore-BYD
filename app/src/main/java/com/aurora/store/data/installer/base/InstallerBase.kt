@@ -125,7 +125,7 @@ abstract class InstallerBase(private val context: Context) : IInstaller {
         }
         return downloadDir.listFiles()!!.filter { it.path.endsWith(".apk") }
             .let {
-            if (UtilPatch.isBydFLAVOUR()) {
+            if (UtilPatch.isBydFlavour()) {
                 InstallerBasePatch.getFiles(context, packageName, it)
             } else {
                 it

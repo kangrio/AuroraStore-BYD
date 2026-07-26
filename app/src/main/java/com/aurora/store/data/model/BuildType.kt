@@ -13,7 +13,7 @@ enum class BuildType(var packageName: String) {
     DEBUG("com.aurora.store.debug");
 
     init {
-        if (UtilPatch.isBydFLAVOUR()) {
+        if (UtilPatch.isBydFlavour()) {
             packageName = packageName.replace("com.aurora.store", ConstantsPatch.FLAVOUR_BYD_PACKAGE_NAME)
         }
     }

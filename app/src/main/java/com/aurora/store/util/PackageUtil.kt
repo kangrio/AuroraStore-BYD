@@ -182,7 +182,7 @@ object PackageUtil {
 
     fun isUpdatable(context: Context, packageName: String, versionCode: Long): Boolean {
         return try {
-            if (UtilPatch.isBydFLAVOUR()) {
+            if (UtilPatch.isBydFlavour()) {
                 return PackageUtilPatch.isUpdatable(context, packageName, versionCode)
             }
             val packageInfo = getPackageInfo(context, packageName)
@@ -199,7 +199,7 @@ object PackageUtil {
      */
     fun isSelfUpdateSupported(context: Context): Boolean {
         val flavorEligible = BuildConfig.FLAVOR == FLAVOUR_VANILLA ||
-            BuildConfig.FLAVOR == FLAVOUR_PRELOAD || UtilPatch.isBydFLAVOUR()
+            BuildConfig.FLAVOR == FLAVOUR_PRELOAD || UtilPatch.isBydFlavour()
         return flavorEligible &&
             BuildType.CURRENT != BuildType.DEBUG &&
             !CertUtil.isFDroidApp(context, BuildConfig.APPLICATION_ID)
