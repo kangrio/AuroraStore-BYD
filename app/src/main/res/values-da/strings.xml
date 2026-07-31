@@ -438,4 +438,34 @@
     <string name="details_data_safety_share_none">Udvikleren siger, at denne app ikke deler brugerdata med andre virksomheder eller organisationer.</string>
     <string name="exodus_tracker_desc">Denne version af appen kan stadig indeholde flere trackere, der endnu ikke findes i Exodus Privacys database.</string>
     <string name="exodus_report_trackers"><xliff:g id="number_of_trackers">%1$d</xliff:g> kendt(e) tracker(e) fundet i <xliff:g id="app_version_name">%2$s</xliff:g></string>
+    <string name="account_set_default">Sæt som standard</string>
+    <string name="account_default">Standardindstilling</string>
+    <string name="account_remove">Slet</string>
+    <string name="account_remove_title">Slet konto?</string>
+    <string name="account_remove_message">Slet %1$s fra Aurora Butik?</string>
+    <string name="account_remove_last_message">Dette er din eneste konto. Hvis du sletter den, vil du blive logget ud, og du vil ikke længere kunne bruge Aurora Butik, før du logger ind igen.</string>
+    <string name="account_add">Tilføj konto</string>
+    <string name="account_add_device">Enheds-konto</string>
+    <string name="account_add_google">Log ind med Google</string>
+    <string name="account_add_anonymous">Tilføj en anonym konto</string>
+    <string name="account_set_default_title">Skift standard-konto?</string>
+    <string name="account_set_default_message">Aurora Butik vil genstarte så du kan bruge den nye standardkonto.</string>
+    <string name="account_switching">Skifter konto …</string>
+    <string name="account_adding">Tilføjer konto …</string>
+    <string name="account_refresh_all">Genopfrisk alle konti</string>
+    <string name="account_refreshing">Genopfrisker konti …</string>
+    <string name="account_refresh_done">Alle konti blev genopfrisket</string>
+    <string name="account_switch_failed">Kunne ikke genopfriske den konto, så standarden blev ikke ændret.</string>
+    <string name="account_add_failed">Kunne ikke tilføje den konto. Prøv venligst igen.</string>
+    <string name="account_exists">Kontoen er allerede tilføjet</string>
+    <string name="action_buy">Køb @ %1$s</string>
+    <string name="action_install_all">Installer alle</string>
+    <string name="action_install_microG">Installer microG-samling</string>
+    <string name="action_switch_account">Skift konto</string>
+    <string name="action_retry">Prøv igen</string>
+    <string name="action_update_anyway">Opdater alligevel</string>
+    <string name="action_view_on_play">Se i Play Butik</string>
+    <string name="details_review_comment_hint">Beskriv din oplevelse (valgfrit)</string>
+    <string name="details_review_edit">Rediger din anmeldelse</string>
+    <string name="details_review_delete">Slet</string>
 </resources>

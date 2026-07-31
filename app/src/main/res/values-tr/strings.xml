@@ -611,4 +611,18 @@
         <item quantity="one">%1$d hesap yenilenemedi</item>
         <item quantity="other">%1$d hesap yenilenemedi</item>
     </plurals>
+    <string name="account_exists">Hesap zaten eklendi</string>
+    <string name="action_update_anyway">Yine de güncelle</string>
+    <string name="exodus_report_history">Sürüm geçmişi</string>
+    <string name="exodus_history_version">%1$s (%2$s)</string>
+    <string name="exodus_history_subtitle">%1$s • %2$d izleyici</string>
+    <string name="exodus_latest">En yeni</string>
+    <string name="pref_updates_warn_trackers">Uygulama güncellemelerinde yeni izleyiciler hakkında uyar</string>
+    <string name="pref_updates_warn_trackers_desc">Yeni sürümde, kurulu sürümde bulunmayan izleyiciler eklendiğinde güncellemeden önce bir uyarı göster</string>
+    <string name="tracker_warning_title">Yeni izleyiciler algılandı</string>
+    <string name="tracker_warning_desc">Bu güncelleme, kurulu sürümde bulunmayan izleyiciler ekliyor:</string>
+    <string name="manual_download_lookup">Sürümleri ara</string>
+    <string name="manual_download_select_version">Sürüm seç</string>
+    <string name="manual_download_no_versions">Bilinen sürüm bulunamadı</string>
+    <string name="manual_download_availability_warning">Bazı sürümler indirilebilir olmayabilir veya aygıtınızla uyumsuz olabilir.</string>
 </resources>

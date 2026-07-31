@@ -623,4 +623,18 @@
         <item quantity="many">Не удалось обновить %1$d аккаунтов</item>
         <item quantity="other">Не удалось обновить %1$d аккаунтов</item>
     </plurals>
+    <string name="exodus_report_history">История версий</string>
+    <string name="exodus_history_version">%1$s (%2$s)</string>
+    <string name="exodus_history_subtitle">%1$s • %2$d трекеров</string>
+    <string name="exodus_latest">Последний</string>
+    <string name="account_exists">Аккаунт уже добавлен</string>
+    <string name="action_update_anyway">Все равно обновить</string>
+    <string name="pref_updates_warn_trackers">Предупреждать о появлении трекеров в обновлениях приложений</string>
+    <string name="pref_updates_warn_trackers_desc">Перед обновлением отображать предупреждение, если в новую версию добавлены трекеры, которых не было в установленной версии</string>
+    <string name="tracker_warning_title">Обнаружены новые трекеры</string>
+    <string name="tracker_warning_desc">В это обновление добавлены трекеры, которых не было в установленной версии:</string>
+    <string name="manual_download_lookup">Посмотреть версии</string>
+    <string name="manual_download_select_version">Выбрать версию</string>
+    <string name="manual_download_no_versions">Известных версий не найдено</string>
+    <string name="manual_download_availability_warning">Некоторые версии могут быть недоступны для скачивания или несовместимы с вашим устройством.</string>
 </resources>

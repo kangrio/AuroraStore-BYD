@@ -621,6 +621,7 @@
     <string name="details_more_target_api">Targets</string>
     <string name="details_more_package_name">Package name</string>
     <string name="details_more_content_rating">Content rating</string>
+    <string name="details_more_certificate_hash">Certificate hash</string>
     <string name="action_unarchive">Unarchive</string>
     <string name="unable_to_open">Unable to open app</string>
     <string name="plexus_powered">Powered by Plexus</string>

@@ -605,4 +605,18 @@
     <plurals name="account_refresh_failed">
         <item quantity="other">无法刷新 %1$d 个账户</item>
     </plurals>
+    <string name="account_exists">已添加账户</string>
+    <string name="action_update_anyway">仍要更新</string>
+    <string name="exodus_report_history">版本历史</string>
+    <string name="exodus_history_version">%1$s (%2$s)</string>
+    <string name="exodus_history_subtitle">%1$s • %2$d 个跟踪器</string>
+    <string name="exodus_latest">最新</string>
+    <string name="pref_updates_warn_trackers">警告应用更新中的新跟踪器</string>
+    <string name="pref_updates_warn_trackers_desc">当新版本添加了已安装版本没有的跟踪器时在更新前显示警告</string>
+    <string name="tracker_warning_title">检测到新跟踪器</string>
+    <string name="tracker_warning_desc">此更新添加了不在已安装版本中的跟踪器：</string>
+    <string name="manual_download_lookup">查找版本</string>
+    <string name="manual_download_select_version">选择版本</string>
+    <string name="manual_download_no_versions">没找到已知版本</string>
+    <string name="manual_download_availability_warning">一些版本可能下载不了或者和你的设备不兼容。</string>
 </resources>

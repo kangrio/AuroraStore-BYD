@@ -111,7 +111,7 @@
     <string name="exodus_view_report">Zobrazit hlášení</string>
     <string name="exodus_substring">známých sledovacích prvků nalezeno ve verzi</string>
     <string name="exodus_no_tracker">Neobsahuje žádné známé sledovací prvky</string>
-    <string name="exodus_progress">Kontroluji trackers…</string>
+    <string name="exodus_progress">Kontroluji sledovací prvky…</string>
     <string name="exodus_powered">Využívá službu Exodus Privacy</string>
     <string name="download_speed_estimating">Odhaduji</string>
     <string name="download_resume_all">Pokračovat vše</string>
@@ -623,4 +623,18 @@
         <item quantity="many">Nepodařilo se aktualizovat %1$d účtů</item>
         <item quantity="other">Nepodařilo se aktualizovat %1$d účtů</item>
     </plurals>
+    <string name="account_exists">Účet již byl přidán</string>
+    <string name="action_update_anyway">Přesto aktualizovat</string>
+    <string name="exodus_report_history">Historie verzí</string>
+    <string name="exodus_history_version">%1$s (%2$s)</string>
+    <string name="exodus_history_subtitle">%1$s • %2$d sledovacích prvků</string>
+    <string name="exodus_latest">Nejnovější</string>
+    <string name="pref_updates_warn_trackers">Varovat o nových sledovacích prvcích při aktualizacích aplikací</string>
+    <string name="pref_updates_warn_trackers_desc">Zobrazit varování před aktualizací na novou verzi, pokud daná verze přidává sledovací prvky, které se nenacházejí v nainstalované verzi</string>
+    <string name="tracker_warning_title">Zjištěny nové sledovací prvky</string>
+    <string name="tracker_warning_desc">Tato aktualizace přidává sledovací prvky, které se nenacházejí v nainstalované verzi:</string>
+    <string name="manual_download_lookup">Najít verze</string>
+    <string name="manual_download_select_version">Vybrat verzi</string>
+    <string name="manual_download_no_versions">Nenalezeny žádné známé verze</string>
+    <string name="manual_download_availability_warning">Některé verze nemusejí být dostupné ke stažení nebo mohou být nekompatibilní s vaším zařízením.</string>
 </resources>

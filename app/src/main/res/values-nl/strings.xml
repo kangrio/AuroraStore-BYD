@@ -33,13 +33,13 @@
     <string name="toast_manual_available">Gefeliciteerd, de aangevraagde versie code is beschikbaar, nu aan het installeren.</string>
     <string name="toast_manual_unavailable">De versiecode die je verzoekt is niet beschikbaar.</string>
     <string name="toast_purchase_blocked">App aankopen niet beschikbaar op anonieme accounts.</string>
-    <string name="toast_spoof_applied">Apparaatvervalsing toegepast.</string>
+    <string name="toast_spoof_applied">Toestel-identiteit gewijzigd.</string>
     <string name="toast_permission_granted">Recht toegestaan</string>
     <string name="toast_developer_setting_failed">Schakel ontwikkelaar instellingen in via de apparaatinstellingen om ze te openen.</string>
     <string name="toast_clipboard_copied">Gekopieerd naar klembord</string>
     <string name="toast_apk_whitelisted">Op witte lijst</string>
     <string name="toast_anonymous_restriction">Niet beschikbaar op anonieme accounts</string>
-    <string name="title_spoof_manager">Vervalsing beheren</string>
+    <string name="title_spoof_manager">Toestel-identiteit beheren</string>
     <string name="title_settings">Instellingen</string>
     <string name="title_purchase_history">Aankoop geschiedenis</string>
     <string name="title_no_network">Geen netwerk</string>
@@ -63,7 +63,7 @@
     <string name="tab_editor_choice">Bewerkers keuze</string>
     <string name="tab_categories">Categorieën</string>
     <string name="insecure_anonymous_apply">Wees zeker dat je opnieuw bent ingelogd en herstart de app om wijzigingen toe te passen.</string>
-    <string name="spoof_apply">Wees zeker dat je opnieuw bent ingelogd om de vervalsing toe te passen</string>
+    <string name="spoof_apply">Wees zeker dat je opnieuw bent ingelogd om de toestel-identiteit aan te passen</string>
     <string name="purchase_session_expired">Sessue verlopen, log opnieuw in om een nieuwe sessie te verkrijgen.</string>
     <string name="purchase_no_file">Kon bestanden niet ontvangen</string>
     <string name="purchase_not_found">App niet gevonden</string>
@@ -601,4 +601,13 @@
         <item quantity="one">%1$d account kon niet worden bijgewerkt</item>
         <item quantity="other">%1$d accounts konden niet worden bijgewerkt</item>
     </plurals>
+    <string name="account_add_device">Toestelaccounts</string>
+    <string name="account_switch_failed">Kon dat account niet vernieuwen, dus de standaard is niet gewijzigd.</string>
+    <string name="details_review_delete_message">Je beoordeling en recensie worden verwijderd uit Google Play.</string>
+    <string name="confirm_deeplink_title">Externe links bevestigen</string>
+    <string name="confirm_deeplink_summary">Vraag bevestiging voordat een app-vermelding via een link wordt geopend, om te voorkomen dat advertenties Aurora Store zonder jouw toestemming openen.</string>
+    <string name="confirm_deeplink_sheet_title">Doorgaan naar Aurora Store?</string>
+    <string name="install_favourites_warning">Voor elke app kan een aparte installatieprompt verschijnen.</string>
+    <string name="pref_ui_dynamic_color_desc">Gebruik kleuren van je achtergrond. Zet uit voor het merkkleurenpalet van Aurora.</string>
+    <string name="toast_fav_install_failed">Ophalen van app-gegevens mislukt</string>
 </resources>

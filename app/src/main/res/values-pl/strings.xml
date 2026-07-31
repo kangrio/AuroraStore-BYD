@@ -183,10 +183,10 @@
     <string name="filter_review_critical">Negatywne</string>
     <string name="filter_review_all">Wszystkie</string>
     <string name="exodus_view_report">Zobacz raport</string>
-    <string name="exodus_substring">znane elementy śledzące w</string>
-    <string name="exodus_progress">Sprawdzam usługi śledzące…</string>
+    <string name="exodus_substring">znane moduły śledzące w</string>
+    <string name="exodus_progress">Sprawdzam moduły śledzące…</string>
     <string name="exodus_powered">Na podstawie Exodus Privacy</string>
-    <string name="exodus_no_tracker">Nie zawiera znanych usług śledzących</string>
+    <string name="exodus_no_tracker">Nie zawiera znanych modułów śledzących</string>
     <string name="download_speed_estimating">Szacowanie</string>
     <string name="download_resume_all">Wznów wszystkie</string>
     <string name="download_queued">W kolejce</string>
@@ -447,13 +447,13 @@
     <string name="details_more_content_rating">Ocena treści</string>
     <string name="details_more_target_api">Docelowy poziom interfejsu</string>
     <string name="details_more_info">Więcej informacji</string>
-    <string name="exodus_report_trackers"><xliff:g id="number_of_trackers">%1$d</xliff:g> znane elementy śledzące w <xliff:g id="app_version_name">%2$s</xliff:g></string>
+    <string name="exodus_report_trackers"><xliff:g id="number_of_trackers">%1$d</xliff:g> znane moduły śledzące w <xliff:g id="app_version_name">%2$s</xliff:g></string>
     <string name="no_description">Brak opisu</string>
     <string name="details_data_safety_collect">Dane, które może zbierać ta aplikacja</string>
     <string name="details_data_safety_shared">Dane, które może udostępniać ta aplikacja</string>
     <string name="details_data_safety_collect_none">Deweloper twierdzi, że ta aplikacja nie gromadzi danych użytkownika.</string>
     <string name="details_data_safety_share_none">Deweloper twierdzi, że ta aplikacja nie udostępnia danych użytkownika innym firmom lub organizacjom.</string>
-    <string name="exodus_tracker_desc">Ta wersja aplikacji może zawierać więcej elementów śledzących, których nie ma jeszcze w bazie danych Exodus Privacy.</string>
+    <string name="exodus_tracker_desc">Ta wersja aplikacji może zawierać więcej modułów śledzących, których nie ma jeszcze w bazie danych Exodus Privacy.</string>
     <string name="action_filter_no_ads">Bez reklam</string>
     <string name="action_filter_no_gms">Bez usług Google Play</string>
     <string name="manual_download_version_error">Kod wersji może zawierać tylko cyfry</string>
@@ -562,7 +562,7 @@
     </plurals>
     <string name="pref_notification_categories_desc">Dostosuj dźwięk i priorytet dla każdego typu powiadomień</string>
     <string name="notification_group_activity">Pobieranie i aktualizacje</string>
-    <string name="pref_self_update_desc">Pokazuj nowe wersje Aurora Store w zakładce Aktualizacje.</string>
+    <string name="pref_self_update_desc">Pokaż nowe wersje Aurora Store w zakładce Aktualizacje.</string>
     <string name="pref_notification_progress_desc">Pokaż szczegółowy postęp podczas pobierania i aktualizacji aplikacji. Gdy wyłączone, jedno ciche powiadomienie utrzymuje pobieranie w tle.</string>
     <string name="action_buy">Kup @ %1$s</string>
     <string name="action_install_all">Zainstaluj wszystkie</string>
@@ -623,4 +623,18 @@
         <item quantity="many">Nie udało się odświeżyć %1$d kont</item>
         <item quantity="other">Nie udało się odświeżyć %1$d kont</item>
     </plurals>
+    <string name="account_exists">Konto zostało już dodane</string>
+    <string name="action_update_anyway">Aktualizuj mimo wszystko</string>
+    <string name="exodus_report_history">Historia wersji</string>
+    <string name="exodus_history_version">%1$s (%2$s)</string>
+    <string name="exodus_history_subtitle">%1$s • %2$d moduły śledzące</string>
+    <string name="exodus_latest">Najnowszy</string>
+    <string name="pref_updates_warn_trackers">Ostrzegaj o nowych modułach śledzących w aktualizacjach aplikacji</string>
+    <string name="pref_updates_warn_trackers_desc">Pokaż ostrzeżenie przed aktualizacją, gdy nowa wersja doda moduły śledzące, których nie było w zainstalowanej wersji</string>
+    <string name="tracker_warning_title">Wykryto nowe moduły śledzące</string>
+    <string name="tracker_warning_desc">Ta aktualizacja dodaje moduły śledzące, których nie było w zainstalowanej wersji:</string>
+    <string name="manual_download_select_version">Wybierz wersję</string>
+    <string name="manual_download_no_versions">Nie znaleziono żadnych znanych wersji</string>
+    <string name="manual_download_lookup">Zobacz dostępne wersje</string>
+    <string name="manual_download_availability_warning">Niektóre wersje mogą być niedostępne do pobrania lub mogą nie działać na Twoim urządzeniu.</string>
 </resources>

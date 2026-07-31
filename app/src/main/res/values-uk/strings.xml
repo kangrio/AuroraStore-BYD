@@ -623,4 +623,18 @@
         <item quantity="many">Не вдалося оновити %1$d облікових записів</item>
         <item quantity="other">Не вдалося оновити %1$d облікових записів</item>
     </plurals>
+    <string name="account_exists">Обліковий запис уже додано</string>
+    <string name="action_update_anyway">Усе одно оновити</string>
+    <string name="exodus_report_history">Історія версій</string>
+    <string name="exodus_history_version">%1$s (%2$s)</string>
+    <string name="exodus_history_subtitle">%1$s • %2$d відстежувачів</string>
+    <string name="exodus_latest">Останній</string>
+    <string name="pref_updates_warn_trackers">Попереджати про нові відстежувачі в оновленнях застосунків</string>
+    <string name="pref_updates_warn_trackers_desc">Показувати попередження перед оновленням, якщо нова версія додає відстежувачі, яких не було у встановленій версії</string>
+    <string name="tracker_warning_title">Виявлено нові відстежувачі</string>
+    <string name="tracker_warning_desc">Це оновлення додає відстежувачі, яких не було у встановленій версії:</string>
+    <string name="manual_download_lookup">Переглянути версії</string>
+    <string name="manual_download_select_version">Вибрати версію</string>
+    <string name="manual_download_no_versions">Відомих версій не знайдено</string>
+    <string name="manual_download_availability_warning">Деякі версії можуть бути недоступними для завантаження або несумісними з вашим пристроєм.</string>
 </resources>

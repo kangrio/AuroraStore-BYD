@@ -617,4 +617,18 @@
         <item quantity="many">Impossible d’actualiser %1$d de comptes</item>
         <item quantity="other">Impossible d’actualiser %1$d de comptes</item>
     </plurals>
+    <string name="account_exists">Le compte est déjà ajouté</string>
+    <string name="action_update_anyway">Mettre à jour quand même</string>
+    <string name="exodus_report_history">Historique des versions</string>
+    <string name="exodus_history_version">%1$s (%2$s)</string>
+    <string name="exodus_history_subtitle">%1$s • %2$d traceurs</string>
+    <string name="exodus_latest">Dernières nouvelles</string>
+    <string name="pref_updates_warn_trackers">Signaler la présence de nouveaux traceurs dans les mises à jour d’applis</string>
+    <string name="pref_updates_warn_trackers_desc">Afficher un avertissement avant la mise à jour si la nouvelle version ajoute des traceurs absents dans la version installée</string>
+    <string name="tracker_warning_title">De nouveaux traceurs ont été détectés</string>
+    <string name="tracker_warning_desc">Cette mise à jour ajoute des traceurs absents dans la version installée :</string>
+    <string name="manual_download_lookup">Consulter les versions</string>
+    <string name="manual_download_select_version">Sélectionnez une version</string>
+    <string name="manual_download_no_versions">Aucune version connue n\'a été trouvée</string>
+    <string name="manual_download_availability_warning">Certaines versions peuvent ne pas être disponibles au téléchargement ou être incompatibles avec votre appareil.</string>
 </resources>

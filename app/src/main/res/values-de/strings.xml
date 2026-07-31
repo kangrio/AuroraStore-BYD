@@ -140,10 +140,10 @@
     <string name="filter_review_all">Alle</string>
     <string name="exodus_view_report">Bericht ansehen</string>
     <string name="exodus_substring">bekannte(r) Tracker gefunden in</string>
-    <string name="exodus_progress">Es wird auf Tracker geprüft…</string>
+    <string name="exodus_progress">Es wird auf Tracker geprüft …</string>
     <string name="exodus_powered">Bereitgestellt von Exodus Privacy</string>
     <string name="exodus_no_tracker">Enthält keine bekannten Tracker</string>
-    <string name="download_speed_estimating">Geschwindigkeit wird ermittelt…</string>
+    <string name="download_speed_estimating">Geschwindigkeit wird ermittelt …</string>
     <string name="download_resume_all">Alle fortsetzen</string>
     <string name="download_queued">In der Warteschlange</string>
     <string name="download_pause_all">Alle anhalten</string>
@@ -151,7 +151,7 @@
     <string name="download_metadata">Metadaten werden geladen</string>
     <string name="download_force_clear_all">Alle löschen</string>
     <string name="download_failed">Download fehlgeschlagen</string>
-    <string name="download_eta_calculating">Übertragungsdauer wird berechnet…</string>
+    <string name="download_eta_calculating">Übertragungsdauer wird berechnet …</string>
     <string name="download_completed">Heruntergeladen</string>
     <string name="download_canceled">Abgebrochen</string>
     <string name="download_cancel_all">Alle abbrechen</string>
@@ -225,13 +225,13 @@
     <string name="toast_aas_token_failed">AAS-Token konnte nicht erstellt werden</string>
     <string name="toast_export_failed">Gerätekonfiguration konnte nicht exportiert werden</string>
     <string name="toast_export_success">Gerätekonfiguration wurde exportiert</string>
-    <string name="app_updater_service_notif_title">Download von Apps im Hintergrund</string>
+    <string name="app_updater_service_notif_title">Herunterladen von Apps im Hintergrund</string>
     <string name="app_updater_service_notif_text">Ermöglicht das Herunterladen von Apps im Hintergrund</string>
     <string name="installer_am_unavailable">Diese Methode ist für Installationen nicht verfügbar. Den „App Manager“ installieren oder die Installationsmethode ändern.</string>
     <string name="pref_install_mode_am">Mit App Manager</string>
     <string name="session_enjoy">Anmelden und genießen.</string>
     <string name="session_good">Alles gut.</string>
-    <string name="session_init">Vorbereitung läuft…</string>
+    <string name="session_init">Vorbereitung läuft …</string>
     <string name="session_login_failed_google">Anmeldung via Google fehlgeschlagen</string>
     <string name="session_scrapped">Letzte Sitzung wurde abgebrochen</string>
     <string name="session_verifying">Sitzung wird überprüft</string>
@@ -295,7 +295,7 @@
     <string name="toast_proxy_failed">Fehler beim Festlegen des Proxys</string>
     <string name="pref_vending_version_device">Standard (aus Gerätekonfiguration)</string>
     <string name="pref_vending_version_title">Google-Play-Version</string>
-    <string name="onboarding_permission_doze">Downloads im Hintergrund</string>
+    <string name="onboarding_permission_doze">Im Hintergrund herunterladen</string>
     <string name="onboarding_permission_doze_desc">Aurora Store das Herunterladen und Aktualisieren von Apps im Hintergrund erlauben</string>
     <string name="pref_updates_auto">Automatische Updates</string>
     <string name="pref_updates_auto_notify">Bei verfügbaren Updates nur benachrichtigen</string>
@@ -400,7 +400,7 @@
     <string name="action_unarchive">Entpacken</string>
     <string name="unable_to_open">App kann nicht geöffnet werden</string>
     <string name="plexus_powered">Bereitgestellt von Plexus</string>
-    <string name="plexus_progress">Es wird auf Kompatibilität geprüft…</string>
+    <string name="plexus_progress">Es wird auf Kompatibilität geprüft …</string>
     <string name="details_compatibility_title">Kompatibilität</string>
     <string name="details_compatibility_gms_required_title">Erfordert Google-Play-Dienste</string>
     <string name="details_compatibility_gms_required_subtitle">Möglicherweise muss Googles proprietäre Bibliothek oder eine FOSS-Neuimplementierung wie microG installiert werden.</string>
@@ -470,7 +470,7 @@
     <string name="page">Seite <xliff:g id="number">%1$d</xliff:g></string>
     <string name="action_skip">Überspringen</string>
     <string name="force_restart_snack">Neu starten, um Änderungen zu übernehmen?</string>
-    <string name="preparing_to_download">Vorbereiten zum Download</string>
+    <string name="preparing_to_download">Vorbereiten zum Herunterladen</string>
     <string name="verifying_downloads">Downloads werden überprüft</string>
     <string name="action_retry">Wiederholen</string>
     <string name="action_view_on_play">Im Play Store ansehen</string>
@@ -595,10 +595,10 @@
     <string name="account_add_anonymous">Anonymes Konto hinzufügen</string>
     <string name="account_set_default_title">Standardkonto wechseln?</string>
     <string name="account_set_default_message">Aurora Store wird neu gestartet und verwendet dann das neue Standardkonto.</string>
-    <string name="account_switching">Konto wird gewechselt…</string>
-    <string name="account_adding">Konto wird hinzugefügt…</string>
+    <string name="account_switching">Konto wird gewechselt …</string>
+    <string name="account_adding">Konto wird hinzugefügt …</string>
     <string name="account_refresh_all">Alle Konten aktualisieren</string>
-    <string name="account_refreshing">Konten werden aktualisieren…</string>
+    <string name="account_refreshing">Konten werden aktualisiert …</string>
     <string name="account_refresh_done">Alle Konten wurden aktualisiert</string>
     <string name="account_switch_failed">Das Konto konnte nicht aktualisiert werden, daher wurde die Standardeinstellung nicht geändert.</string>
     <string name="account_add_failed">Das Konto konnte nicht hinzugefügt werden. Bitte versuche es erneut.</string>
@@ -611,4 +611,18 @@
         <item quantity="one">%1$d Konto konnte nicht aktualisiert werden</item>
         <item quantity="other">%1$d Kontos konnten nicht aktualisiert werden</item>
     </plurals>
+    <string name="account_exists">Konto wurde bereits hinzugefügt</string>
+    <string name="action_update_anyway">Trotzdem aktualisieren</string>
+    <string name="exodus_report_history">Versionsverlauf</string>
+    <string name="exodus_history_version">%1$s (%2$s)</string>
+    <string name="exodus_history_subtitle">%1$s • %2$d Tracker</string>
+    <string name="exodus_latest">Neueste</string>
+    <string name="pref_updates_warn_trackers">Bei App-Updates vor neuen Trackern warnen</string>
+    <string name="pref_updates_warn_trackers_desc">Vor dem Update eine Warnung anzeigen, wenn die neue Version Tracker enthält, die in der installierten Version nicht vorhanden waren</string>
+    <string name="tracker_warning_title">Neue Tracker erkannt</string>
+    <string name="tracker_warning_desc">Dieses Update fügt Tracker hinzu, die in der installierten Version noch nicht enthalten waren:</string>
+    <string name="manual_download_lookup">Versionen ansehen</string>
+    <string name="manual_download_select_version">Eine Version auswählen</string>
+    <string name="manual_download_no_versions">Keine bekannten Versionen gefunden</string>
+    <string name="manual_download_availability_warning">Möglicherweise stehen einige Versionen nicht zum Herunterladen bereit oder sind mit deinem Gerät nicht kompatibel.</string>
 </resources>

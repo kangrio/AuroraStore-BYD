@@ -609,4 +609,6 @@
     </plurals>
     <string name="details_ratings_title_hint">Titull shqyrtimi</string>
     <string name="status_installed">I instaluar</string>
+    <string name="remove_dispenser_title">Hiq shpërndarësit</string>
+    <string name="remove_dispenser_summary">Dëshironi ta hiqni shpërndarësin \"<xliff:g id="url">%1$s</xliff:g>\"?</string>
 </resources>

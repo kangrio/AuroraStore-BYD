@@ -6,6 +6,7 @@
 
 package com.aurora.store.compose.ui.details
 
+import android.util.Base64
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +37,9 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aurora.extensions.adaptiveNavigationIcon
+import com.aurora.extensions.copyToClipBoard
 import com.aurora.extensions.isWindowCompact
+import com.aurora.extensions.toast
 import com.aurora.gplayapi.data.models.App
 import com.aurora.store.R
 import com.aurora.store.compose.composable.Info
@@ -163,6 +167,10 @@ private fun AppDependencies(dependencies: List<App>, onNavigateTo: (Destination)
     }
 }
 
+@OptIn(ExperimentalStdlibApi::class)
+private fun decodeBase64UrlToHex(base64Url: String) =
+    Base64.decode(base64Url, Base64.URL_SAFE).toHexString()
+
 /**
  * Composable to show more information about the app that maybe advanced
  */
@@ -189,6 +197,27 @@ private fun AppInfoMore(app: App) {
         ),
         description = AnnotatedString(text = app.contentRating.title)
     )
+
+    val certHashes = app.certificateSetList.mapNotNull { it.sha256.takeIf { s -> s.isNotBlank() } }
+        .map { decodeBase64UrlToHex(it) }
+    if (certHashes.isNotEmpty()) {
+        val context = LocalContext.current
+        certHashes.forEachIndexed { index, certHash ->
+            val title = if (certHashes.size == 1) {
+                stringResource(R.string.details_more_certificate_hash)
+            } else {
+                "${stringResource(R.string.details_more_certificate_hash)} ${index + 1}"
+            }
+            Info(
+                title = AnnotatedString(text = title),
+                description = AnnotatedString(text = certHash),
+                onClick = {
+                    context.copyToClipBoard(certHash)
+                    context.toast(R.string.toast_clipboard_copied)
+                }
+            )
+        }
+    }
 
     app.appInfo.appInfoMap.forEach { (title, subtitle) ->
         Info(

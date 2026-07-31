@@ -1,3 +1,14 @@
+Changelog : v4.8.4 (76)
+• Rebuilt the interface with modern Jetpack Compose
+• Support for multiple Google accounts
+• User reviews on the app details screen
+• Optional app lock via biometrics or device credentials
+• One-click install for favourites and a buy flow for paid apps
+• Reworked notifications with grouped summaries and settings
+• Revamped updates screen; self-updates now shown in the list
+• More reliable downloads/installs and microG installer support
+• Bug fixes and translation updates
+
 Changelog : v4.8.3 (75)
 • Update microG version
 • Improve app install state handling
