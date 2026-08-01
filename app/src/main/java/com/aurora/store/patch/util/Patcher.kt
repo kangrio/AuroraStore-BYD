@@ -15,6 +15,9 @@ class Patcher(val context: Context) {
         apkFiles: List<File>
     ): List<File> {
         val patchDir = File(apkFiles[0].parentFile, "patch").also { it.mkdirs() }
+        val isPatched = patchDir.listFiles()?.isNotEmpty() == true && apkFiles.size == patchDir.listFiles()?.size
+        if (isPatched) return patchDir.listFiles()!!.toList()
+
         val patchedApks = mutableListOf<File>()
 
         apkFiles.forEach { originalApk ->
@@ -22,8 +25,8 @@ class Patcher(val context: Context) {
             val outputFile = File(patchDir, originalApk.name)
             patchedApks.add(outputFile)
             try {
-                patchedApk.inputStream().use { fileIn ->
-                    fileIn.copyTo(outputFile.outputStream())
+                if (!patchedApk.renameTo(outputFile)) {
+                    patchedApk.copyTo(outputFile, overwrite = true)
                 }
             } finally {
                 patchedApk.delete()
