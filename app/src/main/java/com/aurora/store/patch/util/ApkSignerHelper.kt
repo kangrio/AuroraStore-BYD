@@ -43,13 +43,15 @@ object ApkSignerHelper {
             ApkSigner.Builder(listOf(signerConfig))
                 .setInputApk(inputApk)
                 .setOutputApk(signed)
-                .setV1SigningEnabled(true)
+                .setV1SigningEnabled(false)
                 .setV2SigningEnabled(true)
                 .setV3SigningEnabled(true)
                 .setMinSdkVersion(-1)
                 .build()
                 .sign()
-            signed.copyTo(outputApk, overwrite = true)
+            if (!signed.renameTo(outputApk)) {
+                signed.copyTo(outputApk, overwrite = true)
+            }
         } finally {
             signed.delete()
         }
