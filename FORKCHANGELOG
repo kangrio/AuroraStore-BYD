@@ -1,3 +1,7 @@
+Changelog : v0.0.7
+• Synced with the latest upstream changes from AuroraStore v4.8.4 (ad3d349)
+• hot fix Install MicroG bundle failed on first setup
+
 Changelog : v0.0.6
 • Synced with the latest upstream changes from AuroraStore (3ef392f)
 • Implemented fallback for YouTube and YouTube Music to use prebuilt Morphe-patched APK files
