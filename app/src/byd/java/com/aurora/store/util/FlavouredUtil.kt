@@ -8,6 +8,12 @@ object FlavouredUtil : IFlavouredUtil {
     override val defaultDispensers = setOf(Constants.URL_DISPENSER)
 
     override fun promptMicroGInstall(context: Context): Boolean {
-        return !PackageUtil.isInstalled(context, Constants.PACKAGE_NAME_GMS) || !PackageUtil.isInstalled(context, Constants.PACKAGE_NAME_PLAY_STORE)
+        return Preferences.getBoolean(context, Preferences.PREFERENCE_INTRO) &&
+                !isInstalledMicroGBundle(context)
+    }
+
+    private fun isInstalledMicroGBundle(context: Context): Boolean {
+        return PackageUtil.isInstalled(context, Constants.PACKAGE_NAME_GMS) &&
+                PackageUtil.isInstalled(context, Constants.PACKAGE_NAME_PLAY_STORE)
     }
 }
