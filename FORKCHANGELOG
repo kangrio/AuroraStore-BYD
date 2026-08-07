@@ -1,3 +1,7 @@
+Changelog: v0.0.8
+• Faster patching
+• Enforce microG installation when missing
+
 Changelog : v0.0.7
 • Synced with the latest upstream changes from AuroraStore v4.8.4 (ad3d349)
 • hot fix Install MicroG bundle failed on first setup
