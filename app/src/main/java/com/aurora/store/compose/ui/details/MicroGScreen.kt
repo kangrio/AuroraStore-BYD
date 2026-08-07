@@ -50,6 +50,7 @@ import com.aurora.store.compose.preview.AppPreviewProvider
 import com.aurora.store.compose.preview.ThemePreviewProvider
 import com.aurora.store.data.model.PermissionType
 import com.aurora.store.data.providers.PermissionProvider
+import com.aurora.store.patch.UtilPatch
 import com.aurora.store.viewmodel.details.AppDetailsViewModel
 import com.aurora.store.viewmodel.onboarding.MicroGUIState
 import com.aurora.store.viewmodel.onboarding.MicroGViewModel
@@ -124,6 +125,7 @@ private fun ScreenContent(
                         modifier = Modifier.weight(1F),
                         onClick = onProceed,
                         enabled = !uiState.isInProgress
+                                && (!UtilPatch.isBydFlavour() || uiState.isInstalled)
                     ) {
                         Text(
                             text = if (uiState.isInstalled) {
