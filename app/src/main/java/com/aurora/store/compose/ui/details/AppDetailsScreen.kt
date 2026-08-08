@@ -117,6 +117,7 @@ import com.aurora.store.viewmodel.details.AppDetailsViewModel
 import com.jakewharton.processphoenix.ProcessPhoenix
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import com.aurora.store.patch.compose.composable.InstallActionDialog
 
 @Composable
 fun AppDetailsScreen(
@@ -389,6 +390,9 @@ private fun ScreenContentApp(
                 isChecking = false
                 showExtraPane(ExtraScreen.MicroG)
             } else {
+                if (InstallActionDialog.showDialog(app, accountId)) {
+                    return
+                }
                 if (accountId != null) {
                     onDownloadWith(requestedApp, accountId)
                 } else {
@@ -812,6 +816,8 @@ private fun ScreenContentApp(
             }
         }
     )
+
+    InstallActionDialog.Dialog(onAccept = ::onInstall)
 }
 
 /**
