@@ -48,6 +48,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.MainScope
 import okhttp3.OkHttpClient
 import org.lsposed.hiddenapibypass.HiddenApiBypass
+import com.aurora.store.patch.AuroraAppPatch
 
 @HiltAndroidApp
 class AuroraApp : Application(), Configuration.Provider, SingletonImageLoader.Factory {
@@ -81,6 +82,7 @@ class AuroraApp : Application(), Configuration.Provider, SingletonImageLoader.Fa
     override fun onCreate() {
         ComposeMaterial3Flags.isCheckboxStylingFixEnabled = true
         super.onCreate()
+        AuroraAppPatch.setupCrashHandler(this)
         // Set the app theme
         val themeStyle = Preferences.getInteger(this, Preferences.PREFERENCE_THEME_STYLE)
         setAppTheme(themeStyle)
