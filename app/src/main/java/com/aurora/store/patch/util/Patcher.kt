@@ -107,7 +107,21 @@ class Patcher(val context: Context) {
         }
     }
 
+    fun addPermission(apkModule: ApkModule, name: String) {
+        val manifest = apkModule.androidManifest.manifestElement
+        val position = manifest.lastIndexOf(AndroidManifest.TAG_uses_permission) + 1
+        manifest.newElementAt(position, AndroidManifest.TAG_uses_permission).apply {
+            createAndroidAttribute(null, android.R.attr.name).valueAsString = name
+        }
+    }
+
     private fun patchAndroidManifest(apkModule: ApkModule, signatureData: String) {
+        /**
+         * Fix missing GMS when package is installed.
+         * See: https://github.com/kangrio/AuroraStore-BYD/issues/18.
+         */
+        addPermission(apkModule, "android.permission.QUERY_ALL_PACKAGES")
+
         val application: ResXmlElement = apkModule.androidManifest.applicationElement
 
         application.getOrCreateAndroidAttribute(
