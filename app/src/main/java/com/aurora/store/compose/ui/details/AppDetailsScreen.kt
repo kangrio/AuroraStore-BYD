@@ -390,7 +390,7 @@ private fun ScreenContentApp(
                 isChecking = false
                 showExtraPane(ExtraScreen.MicroG)
             } else {
-                if (InstallActionDialog.showDialog(app, accountId)) {
+                if (InstallActionDialog.showDialog(context, app, accountId)) {
                     return
                 }
                 if (accountId != null) {
