@@ -109,6 +109,15 @@ class Patcher(val context: Context) {
 
     fun addPermission(apkModule: ApkModule, name: String) {
         val manifest = apkModule.androidManifest.manifestElement
+        val permissionExist =
+            manifest.getElements(AndroidManifest.TAG_uses_permission)?.asSequence()?.any {
+                it.getOrCreateAndroidAttribute(
+                    null,
+                    android.R.attr.name
+                ).valueAsString == name
+            } == true
+        if (permissionExist) return
+
         val position = manifest.lastIndexOf(AndroidManifest.TAG_uses_permission) + 1
         manifest.newElementAt(position, AndroidManifest.TAG_uses_permission).apply {
             createAndroidAttribute(null, android.R.attr.name).valueAsString = name
