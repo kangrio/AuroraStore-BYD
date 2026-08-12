@@ -43,6 +43,7 @@ import com.aurora.store.compose.preview.ThemePreviewProvider
 import com.aurora.store.data.model.ExternalItem
 import com.aurora.store.data.model.InstallStatus
 import com.aurora.store.data.model.Link
+import com.aurora.store.patch.compose.composable.PatchProgressDialog
 import com.aurora.store.util.CommonUtil.getETAString
 import com.aurora.store.viewmodel.onboarding.MicroGUIState
 
@@ -179,6 +180,10 @@ fun MicroG(
                 }
             }
         }
+    }
+
+    uiState.items.forEach {
+        PatchProgressDialog(packageName = it.packageName, displayName =  it.displayName)
     }
 }
 
