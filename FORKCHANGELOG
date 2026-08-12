@@ -1,3 +1,8 @@
+Changelog: v0.0.9
+• add confirmation dialog for MicroG compatibility modifications
+• fixed missing GMS when package is installed (#18)
+• implement crash logging to file `Android/data/{package}/files/log/crash.txt` (c9c131ed)
+
 Changelog: v0.0.8
 • Faster patching
 • Enforce microG installation when missing
