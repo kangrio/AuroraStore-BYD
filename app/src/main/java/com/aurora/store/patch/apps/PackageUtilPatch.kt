@@ -3,9 +3,21 @@ package com.aurora.store.patch.apps
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.content.pm.PackageInfoCompat
+import com.aurora.store.data.installer.AppInstaller
+import com.aurora.store.data.model.Installer
 import com.aurora.store.util.PackageUtil
 
 object PackageUtilPatch {
+    fun canRequestPackageInstalls(context: Context): Boolean {
+        val currentInstaller = AppInstaller.getCurrentInstaller(context)
+        return when (currentInstaller) {
+            Installer.ROOT -> AppInstaller.hasRootAccess()
+            Installer.AM -> AppInstaller.hasAppManager(context)
+            Installer.SHIZUKU -> AppInstaller.hasShizukuOrSui(context) && AppInstaller.hasShizukuPerm()
+            else -> false
+        }
+    }
+
     fun isUpdatable(context: Context, packageName: String, versionCode: Long): Boolean {
         return try {
             // original apps
