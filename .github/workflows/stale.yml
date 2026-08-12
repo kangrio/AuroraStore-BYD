@@ -1,0 +1,17 @@
+name: "Close Inactive Issues"
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-stale: 14
+          days-before-close: 7
+          stale-issue-message: 'This issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs.'
+          close-issue-message: 'This issue has been automatically closed due to inactivity.'
+          stale-issue-label: 'no-response'
