@@ -204,6 +204,9 @@ ktlint {
 }
 
 dependencies {
+    // Icons
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
     // patcher
     implementation(files("libs/ARSCLib-1.3.8.jar"))
     implementation("com.android.tools.build:apksig:8.8.0")
