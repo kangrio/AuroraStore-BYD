@@ -3,11 +3,14 @@ name: Build BYD APK
 on:
   push:
     branches:
-      - 'release/**'
+      - main
   workflow_dispatch:
 
 jobs:
   build:
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      startsWith(github.event.head_commit.message, 'Merge pull request')
     runs-on: ubuntu-latest
 
     permissions:
@@ -16,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -35,11 +40,13 @@ jobs:
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/keystore.jks
+
       - name: Create signing.properties
         run: |
           echo "STORE_FILE=keystore.jks" >> app/signing.properties
           echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> app/signing.properties
           echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> app/signing.properties
+
       - name: Build Release APK
         run: ./gradlew :app:assembleBydRelease
 
@@ -60,20 +67,29 @@ jobs:
         with:
           apk-path: ${{ steps.apk-path.outputs.path }}
 
-      - name: Get last commit message
+      - name: Get bump commit message
         id: commit
         run: |
-          echo "message<<EOF" >> $GITHUB_OUTPUT
-          git log -1 --pretty=%B >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          MESSAGE=$(git log --format=%B --grep='^bump:' -i -1)
+
+          if [ -z "$MESSAGE" ]; then
+            echo "bump: commit not found"
+            exit 1
+          fi
+
+          echo "message<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$MESSAGE" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Generate tag
         id: tag
+        env:
+          VERSION_NAME: ${{ steps.apk-info.outputs.version-name }}
         run: |
-          BRANCH="${GITHUB_REF_NAME#release/}"
-          BRANCH="${BRANCH//\//-}"
+          version="${VERSION_NAME#*\(}"
+          version="${version%\)}"
           
-          TAG="byd-${BRANCH}-$(date +'%Y%m%d')"
+          TAG="byd-${version}-$(date +'%Y%m%d')"
           echo "TAG=$TAG" >> $GITHUB_OUTPUT
 
       - name: Generate release_feed.json
