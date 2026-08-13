@@ -2,7 +2,9 @@ package com.aurora.store.patch.util
 
 import android.content.Context
 import android.util.Base64
+import com.aurora.store.BuildConfig
 import com.aurora.store.R
+import com.aurora.store.patch.ConstantsPatch
 import com.aurora.store.patch.state.PatchProgressState
 import com.reandroid.apk.ApkModule
 import com.reandroid.app.AndroidManifest
@@ -154,8 +156,9 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
 
         application.getOrCreateAndroidAttribute(
             "appComponentFactory", 0
-        ).valueAsString = "com.kangrio.extension.SpoofAppComponentFactory"
-        addMetaData(apkModule, "org.microg.gms.spoofed_certificates", signatureData)
+        ).valueAsString = ConstantsPatch.PATCH_APP_COMPONENT_FACTORY_CLASS
+        addMetaData(apkModule, ConstantsPatch.META_DATA_SPOOFED_CERTIFICATES, signatureData)
+        addMetaData(apkModule, ConstantsPatch.META_DATA_PATCH_VERSION_CODE, BuildConfig.PATCH_VERSION_CODE, ValueType.DEC)
 
         // source https://github.com/microg/GmsCore/blob/master/play-services-core/src/huawei/AndroidManifest.xml
         if (apkModule.packageName == MICROG_PACKAGE_NAME) {

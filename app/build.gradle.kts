@@ -156,6 +156,7 @@ configure<ApplicationExtension> {
             val bydVersionName = "byd(0.0.$bydVersionCode)"
             versionNameSuffix = "-$bydVersionName"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
+            buildConfigField("int", "PATCH_VERSION_CODE", "1")
         }
     }
 
