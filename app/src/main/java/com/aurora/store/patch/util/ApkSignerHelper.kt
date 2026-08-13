@@ -21,6 +21,7 @@ import java.util.Date
 object ApkSignerHelper {
     private val PASSWORD = "12345678".toCharArray()
     private const val ALIAS = "AuroraStore"
+    private var keyStoreCache: KeyStore? = null
 
     fun signApk(
         context: Context,
@@ -58,6 +59,8 @@ object ApkSignerHelper {
     }
 
     private fun getKeystore(context: Context): KeyStore {
+        if (keyStoreCache != null) return keyStoreCache!!
+
         val ks = KeyStore.getInstance("PKCS12")
 
         val publicKeystoreFile = File(
@@ -127,6 +130,7 @@ object ApkSignerHelper {
             ks.load(it, PASSWORD)
         }
 
+        keyStoreCache = ks
         return ks
     }
 

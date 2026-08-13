@@ -118,6 +118,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import com.aurora.store.patch.compose.composable.InstallActionDialog
+import com.aurora.store.patch.compose.composable.PatchProgressDialog
 
 @Composable
 fun AppDetailsScreen(
@@ -818,6 +819,7 @@ private fun ScreenContentApp(
     )
 
     InstallActionDialog.Dialog(onAccept = ::onInstall)
+    PatchProgressDialog(packageName = app.packageName, displayName = app.displayName)
 }
 
 /**

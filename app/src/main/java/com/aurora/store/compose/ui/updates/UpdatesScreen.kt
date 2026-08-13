@@ -32,6 +32,7 @@ import com.aurora.store.compose.navigation.Destination
 import com.aurora.store.data.model.DownloadStatus
 import com.aurora.store.data.room.download.Download
 import com.aurora.store.data.room.update.Update
+import com.aurora.store.patch.compose.composable.PatchProgressDialog
 import com.aurora.store.viewmodel.all.UpdatesViewModel
 
 @Composable
@@ -130,7 +131,9 @@ fun UpdatesScreen(
                                 isChecking = update.packageName in checkingPackages,
                                 // Served from the Aurora OSS feed, not Play — there is
                                 // no app details page to open.
-                                onClick = {},
+                                onClick = {
+                                    onNavigateTo(Destination.AppUpdate(update))
+                                },
                                 onUpdate = { onRequestUpdate(update) },
                                 onCancel = { onCancelUpdate(update.packageName) }
                             )
@@ -283,5 +286,6 @@ private fun LazyListScope.updateItems(
             onUpdate = { onRequestUpdate(update) },
             onCancel = { onCancelUpdate(update.packageName) }
         )
+        PatchProgressDialog(update.packageName, update.displayName)
     }
 }

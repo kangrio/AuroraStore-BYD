@@ -279,6 +279,10 @@ object PackageUtil {
 
     fun canRequestPackageInstalls(context: Context): Boolean {
         return if (isOAndAbove) {
+            if (PackageUtilPatch.canRequestPackageInstalls(context)) {
+                return true
+            }
+
             context.packageManager.canRequestPackageInstalls()
         } else {
             @Suppress("DEPRECATION")

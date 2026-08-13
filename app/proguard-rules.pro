@@ -137,4 +137,10 @@
 -keep class com.hihonor.** { *; }
 -dontwarn com.hihonor.**
 
+# Keep Android specific classes and methods
 -keep class com.android.apksig.** { *; }
+-dontwarn com.android.apksig.**
+-keep class android.** { *; }
+-dontwarn android.**
+-keep class org.xmlpull.** { *; }
+-dontwarn org.xmlpull.**

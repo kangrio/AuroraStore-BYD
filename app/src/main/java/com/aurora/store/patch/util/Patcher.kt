@@ -1,7 +1,11 @@
 package com.aurora.store.patch.util
+
 import android.content.Context
 import android.util.Base64
+import com.aurora.store.BuildConfig
 import com.aurora.store.R
+import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.patch.state.PatchProgressState
 import com.reandroid.apk.ApkModule
 import com.reandroid.app.AndroidManifest
 import com.reandroid.archive.ByteInputSource
@@ -10,70 +14,87 @@ import com.reandroid.arsc.value.ValueType
 import java.io.File
 import java.io.InputStream
 
-class Patcher(val context: Context) {
-    fun patch(
-        apkFiles: List<File>
-    ): List<File> {
+class Patcher(val context: Context, val packageName: String, val apkFiles: List<File>) {
+    private val progressMessages = apkFiles.flatMap {
+        listOf(
+            "Patching ${it.nameWithoutExtension}",
+            "Signing ${it.nameWithoutExtension}"
+        )
+    }
+    var signOnly: Boolean = false
+
+    fun start(): List<File> {
         val patchDir = File(apkFiles[0].parentFile, "patch").also { it.mkdirs() }
         val isPatched = patchDir.listFiles()?.isNotEmpty() == true && apkFiles.size == patchDir.listFiles()?.size
         if (isPatched) return patchDir.listFiles()!!.toList()
 
+        progressState.start(packageName, progressMessages)
         val patchedApks = mutableListOf<File>()
 
-        apkFiles.forEach { originalApk ->
-            val patchedApk = patchSingle(originalApk)
+        apkFiles.forEachIndexed { fileIndex, originalApk ->
             val outputFile = File(patchDir, originalApk.name)
+
+            val patchedApk = patchSingle(fileIndex, originalApk)
+            signApk(fileIndex, patchedApk, outputFile)
             patchedApks.add(outputFile)
-            try {
-                if (!patchedApk.renameTo(outputFile)) {
-                    patchedApk.copyTo(outputFile, overwrite = true)
-                }
-            } finally {
-                patchedApk.delete()
-            }
         }
+
+        progressState.finish()
 
         return patchedApks
     }
 
-    fun patchWithReplace(
-        apkFiles: List<File>
-    ) {
-        val patchedApks = patch(apkFiles)
+    fun startWithReplace() {
+        val patchedApks = start()
         apkFiles.forEachIndexed { index, file ->
             file.delete()
             patchedApks[index].renameTo(file)
         }
     }
 
-    fun patchSingle(originalApk: File): File {
+    fun patchSingle(fileIndex: Int, originalApk: File): File {
+        val patchStepIndex = fileIndex * 2
+        progressState.beginStep(patchStepIndex, progressMessages[patchStepIndex])
+
         val apkModule = ApkModule.loadApkFile(originalApk)
+        if (!apkModule.isBaseModule || signOnly) {
+            apkModule.destroy()
+            progressState.completeStep(patchStepIndex)
+            return originalApk
+        }
+
         val patchedApk = File.createTempFile("patched_${System.currentTimeMillis()}", ".apk")
 
-        if (apkModule.isBaseModule) {
+        try {
             patchAndroidManifest(apkModule, getSignatureBase64(apkModule))
             addPatchedDexToApk(apkModule)
             replaceMicroGProfiles(apkModule)
 
-            val tmpApk = File.createTempFile("tmp_${System.currentTimeMillis()}", ".apk")
-            apkModule.writeApk(tmpApk)
-
-            signApk(tmpApk, patchedApk)
-            tmpApk.delete()
-        } else {
-            signApk(originalApk, patchedApk)
+            apkModule.writeApk(patchedApk)
+            apkModule.destroy()
+        } catch (e: Exception) {
+            progressState.failStep(patchStepIndex, e.message ?: "Failed on ${originalApk.name}")
+        } finally {
+            apkModule.destroy()
         }
 
-        apkModule.destroy()
-
+        progressState.completeStep(patchStepIndex)
         return patchedApk
     }
 
     fun signApk(
+        fileIndex: Int,
         apkFile: File,
         outputFile: File
     ): File {
-        ApkSignerHelper.signApk(context, apkFile, outputFile)
+        val patchStepIndex = fileIndex * 2 + 1
+        progressState.beginStep(patchStepIndex, progressMessages[patchStepIndex])
+        try {
+            ApkSignerHelper.signApk(context, apkFile, outputFile)
+        } catch (e: Exception) {
+            progressState.failStep(patchStepIndex, e.message ?: "Failed on ${apkFile.name}")
+        }
+        progressState.completeStep(patchStepIndex)
         return outputFile
     }
 
@@ -135,8 +156,9 @@ class Patcher(val context: Context) {
 
         application.getOrCreateAndroidAttribute(
             "appComponentFactory", 0
-        ).valueAsString = "com.kangrio.extension.SpoofAppComponentFactory"
-        addMetaData(apkModule, "org.microg.gms.spoofed_certificates", signatureData)
+        ).valueAsString = ConstantsPatch.PATCH_APP_COMPONENT_FACTORY_CLASS
+        addMetaData(apkModule, ConstantsPatch.META_DATA_SPOOFED_CERTIFICATES, signatureData)
+        addMetaData(apkModule, ConstantsPatch.META_DATA_PATCH_VERSION_CODE, BuildConfig.PATCH_VERSION_CODE, ValueType.DEC)
 
         // source https://github.com/microg/GmsCore/blob/master/play-services-core/src/huawei/AndroidManifest.xml
         if (apkModule.packageName == MICROG_PACKAGE_NAME) {
@@ -227,7 +249,9 @@ class Patcher(val context: Context) {
     }
 
     companion object {
-        const val MICROG_PACKAGE_NAME = "com.google.android.gms"
-        const val MICROG_SETTINGS_PROVIDER_AUTHORITY = "org.microg.gms.settings"
+        private const val MICROG_PACKAGE_NAME = "com.google.android.gms"
+        private const val MICROG_SETTINGS_PROVIDER_AUTHORITY = "org.microg.gms.settings"
+
+        val progressState = PatchProgressState()
     }
 }

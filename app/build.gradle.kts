@@ -152,10 +152,17 @@ configure<ApplicationExtension> {
         create("byd") {
             dimension = "device"
             applicationIdSuffix = ".byd"
-            val bydVersionCode = 9
-            val bydVersionName = "byd(0.0.$bydVersionCode)"
+
+            // 1-9 -> 0.0.X, 10-99 -> 0.X.X, 100-999 -> X.X.X, 1000+ -> XX.X.X
+            val bydVersionCode = 100
+            val major = bydVersionCode / 100
+            val minor = (bydVersionCode / 10) % 10
+            val patch = bydVersionCode % 10
+            val bydVersionName = "byd($major.$minor.$patch)"
+
             versionNameSuffix = "-$bydVersionName"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
+            buildConfigField("int", "PATCH_VERSION_CODE", "1")
         }
     }
 
@@ -204,8 +211,11 @@ ktlint {
 }
 
 dependencies {
+    // Icons
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
     // patcher
-    implementation(files("libs/ARSCLib-1.3.8.jar"))
+    implementation("io.github.reandroid:ARSCLib:1.4.0")
     implementation("com.android.tools.build:apksig:8.8.0")
     implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
 
