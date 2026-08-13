@@ -53,6 +53,7 @@ import com.aurora.store.data.model.NetworkStatus
 import com.aurora.store.data.model.PermissionType
 import com.aurora.store.data.providers.PermissionProvider.Companion.isGranted
 import com.aurora.store.data.room.update.Update
+import com.aurora.store.patch.compose.composable.WelcomeDialog
 import com.aurora.store.util.PackageUtil
 import com.aurora.store.util.Preferences
 import com.aurora.store.util.Preferences.PREFERENCE_UPDATES_WARN_TRACKERS
@@ -330,4 +331,5 @@ fun MainScreen(
             }
         )
     }
+    WelcomeDialog.Dialog()
 }

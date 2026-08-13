@@ -9,6 +9,8 @@ object ConstantsPatch {
     const val GITHUB_APPS_REPO_ID = "1301975707"
     const val UPDATE_APPS_URL = "${GITHUB_API_URL}/${GITHUB_APPS_REPO_ID}/releases/latest"
 
+    const val HIDE_SHOW_WELCOME_DIALOG = "HIDE_SHOW_WELCOME_DIALOG"
+
     const val PATCH_APP_COMPONENT_FACTORY_CLASS = "com.kangrio.extension.SpoofAppComponentFactory"
     const val META_DATA_SPOOFED_CERTIFICATES = "org.microg.gms.spoofed_certificates"
     const val META_DATA_PATCH_VERSION_CODE = "com.kangrio.extension.patch_version_code"
