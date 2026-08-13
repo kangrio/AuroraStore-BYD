@@ -1,3 +1,10 @@
+Changelog: v1.0.0
+• implement visual progress tracking for APK patching
+• fix requestPackageInstalls check permission to support Root, Shizuku, and AM installers
+• implement patch versioning for update detection
+• implement welcome dialog
+• improve read KeyStore perf
+
 Changelog: v0.0.9
 • add confirmation dialog for MicroG compatibility modifications
 • fixed missing GMS when package is installed (#18)
