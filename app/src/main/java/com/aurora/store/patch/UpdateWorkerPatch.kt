@@ -18,66 +18,50 @@ object UpdateWorkerPatch {
         return withContext(Dispatchers.IO) {
             val updates = mutableListOf<App>()
             try {
+                val microGBundle = listOf(
+                    Constants.PACKAGE_NAME_GMS,
+                    Constants.PACKAGE_NAME_PLAY_STORE
+                ).filter {
+                    CertUtilPatch.isSignedByAuroraStore(context, it)
+                }
+
+                if (microGBundle.isEmpty()) return@withContext null
+
                 val microGLatestRelease = MicroGUpdate.getLatestRelease()
-                val microg = MicroGUpdate.getMicroGApk(microGLatestRelease)
-                val companion = MicroGUpdate.getCompanionApk(microGLatestRelease)
-
-                val isMicroGUpdate =
-                    PackageUtil.isUpdatable(context, Constants.PACKAGE_NAME_GMS, microg.versionCode)
-
-                val isCompanionUpdate =
-                    PackageUtil.isUpdatable(context, Constants.PACKAGE_NAME_PLAY_STORE, companion.versionCode)
-
-                if (isMicroGUpdate) {
-                    updates.add(
-                        App(
-                            packageName = microg.packageName,
-                            versionCode = microg.versionCode,
-                            versionName = microg.versionName,
-                            changes = microGLatestRelease.body,
-                            size = microg.fileList.first().size,
-                            updatedOn = microGLatestRelease.published_at,
-                            displayName = microg.displayName,
-                            developerName = microg.developerName,
-                            iconArtwork = Artwork(url = microg.iconURL),
-                            fileList = microg.fileList,
-                            isFree = true,
-                            isInstalled = true,
-                            certificateSetList = CertUtil.getEncodedCertificateHashes(
-                                context,
-                                microg.packageName
-                            ).map {
-                                EncodedCertificateSet(certificateSet = it, sha256 = String())
-                            }.toMutableList()
-                        )
+                microGBundle.forEach { pkg ->
+                    val externalApk =
+                        MicroGUpdate.getUpdate(pkg, microGLatestRelease) ?: return@forEach
+                    val isCanUpdate = PackageUtil.isUpdatable(
+                        context,
+                        externalApk.packageName,
+                        externalApk.versionCode
                     )
-                }
 
-                if (isCompanionUpdate) {
-                    updates.add(
-                        App(
-                            packageName = companion.packageName,
-                            versionCode = companion.versionCode,
-                            versionName = companion.versionName,
-                            changes = microGLatestRelease.body,
-                            size = companion.fileList.first().size,
-                            updatedOn = microGLatestRelease.published_at,
-                            displayName = companion.displayName,
-                            developerName = companion.developerName,
-                            iconArtwork = Artwork(url = companion.iconURL),
-                            fileList = companion.fileList,
-                            isFree = true,
-                            isInstalled = true,
-                            certificateSetList = CertUtil.getEncodedCertificateHashes(
-                                context,
-                                companion.packageName
-                            ).map {
-                                EncodedCertificateSet(certificateSet = it, sha256 = String())
-                            }.toMutableList()
+                    if (isCanUpdate) {
+                        updates.add(
+                            App(
+                                packageName = externalApk.packageName,
+                                versionCode = externalApk.versionCode,
+                                versionName = externalApk.versionName,
+                                changes = microGLatestRelease.body,
+                                size = externalApk.fileList.first().size,
+                                updatedOn = microGLatestRelease.published_at,
+                                displayName = externalApk.displayName,
+                                developerName = externalApk.developerName,
+                                iconArtwork = Artwork(url = externalApk.iconURL),
+                                fileList = externalApk.fileList,
+                                isFree = true,
+                                isInstalled = true,
+                                certificateSetList = CertUtil.getEncodedCertificateHashes(
+                                    context,
+                                    externalApk.packageName
+                                ).map {
+                                    EncodedCertificateSet(certificateSet = it, sha256 = String())
+                                }.toMutableList()
+                            )
                         )
-                    )
+                    }
                 }
-
                 if (updates.isNotEmpty()) {
                     return@withContext updates
                 }

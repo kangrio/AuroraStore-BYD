@@ -52,6 +52,20 @@ class MicroGUpdate {
             }
         }
 
+        fun getUpdate(packageName: String, githubRelease: GitHubRelease): ExternalApk? {
+            return when(packageName) {
+                PACKAGE_NAME_GMS -> {
+                    getMicroGApk(githubRelease)
+                }
+
+                PACKAGE_NAME_PLAY_STORE -> {
+                    getCompanionApk(githubRelease)
+                }
+
+                else -> null
+            }
+        }
+
         fun getMicroGApk(githubRelease: GitHubRelease) : ExternalApk {
             val latestGms = githubRelease.assets
                 .filter { it.name.contains(PACKAGE_NAME_GMS) }
