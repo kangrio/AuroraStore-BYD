@@ -158,8 +158,9 @@ internal fun ClusterRow(
         contentPadding = PaddingValues(horizontal = dimensionResource(R.dimen.spacing_small)),
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small))
     ) {
+        val apps = cluster.clusterAppList.distinctBy { it.packageName }
         itemsIndexed(
-            items = cluster.clusterAppList,
+            items = apps,
             key = { _, app -> app.packageName }
         ) { _, app ->
             AppListItem(
