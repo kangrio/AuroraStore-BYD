@@ -45,6 +45,7 @@ app/nightly/*
 app/vanilla/*
 app/huawei/*
 app/preload/*
+app/byd/*
 
 
 #Exclude signing configurations & keystore
