@@ -120,6 +120,44 @@ This project is for educational and personal use only.
 
 ---
 
+## 🌟 Awesome Apps for BYD Head Units
+
+A curated list of apps and tools that work great on BYD Android head units (DiLink).
+
+### 🎙️ AI & Voice Assistants
+
+| App                 | Description                                                                                                                                                                 | Link                                                      |
+|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
+| **Assistant (BYD)** | AI voice assistant launcher with offline wake-word detection ("Hey Rio", "Alexa"), one-tap launch for Google Assistant / ChatGPT / Claude, and BYD DiLink onboarding wizard | [kangrio/Assistant](https://github.com/kangrio/Assistant) |
+| **Google / Gemini** | Google's AI assistant and multimodal AI — search, navigation, smart home control                                                                                            | Available via Aurora Store                                |
+| **ChatGPT**         | OpenAI's conversational AI with voice mode                                                                                                                                  | Available via Aurora Store                                |
+
+### 🗺️ Navigation
+
+| App             | Description                            | Link                       |
+|-----------------|----------------------------------------|----------------------------|
+| **Google Maps** | Full-featured navigation and maps      | Available via Aurora Store |
+| **Waze**        | Community-based traffic and navigation | Available via Aurora Store |
+
+### 🎵 Media & Entertainment
+
+| App               | Description                 | Link                       |
+|-------------------|-----------------------------|----------------------------|
+| **YouTube**       | Video streaming             | Available via Aurora Store |
+| **YouTube Music** | Music streaming from Google | Available via Aurora Store |
+
+### 📧 Productivity
+
+| App             | Description            | Link                       |
+|-----------------|------------------------|----------------------------|
+| **Gmail**       | Google email client    | Available via Aurora Store |
+| **Google News** | Personalized news feed | Available via Aurora Store |
+
+> [!TIP]
+> Use **[Assistant (BYD)](https://github.com/kangrio/Assistant)** to quickly launch any of these AI apps with a custom wake word — no screen tapping needed while driving.
+
+---
+
 ### 🙏 Credits
 
 Original project:
