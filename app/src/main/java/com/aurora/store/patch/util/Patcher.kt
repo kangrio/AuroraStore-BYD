@@ -52,12 +52,17 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         }
     }
 
+    fun isBaseModule(apkModule: ApkModule): Boolean {
+        return apkModule.hasAndroidManifest()
+                && !apkModule.getAndroidManifest().isSplit()
+    }
+
     fun patchSingle(fileIndex: Int, originalApk: File): File {
         val patchStepIndex = fileIndex * 2
         progressState.beginStep(patchStepIndex, progressMessages[patchStepIndex])
 
         val apkModule = ApkModule.loadApkFile(originalApk)
-        if (!apkModule.isBaseModule || signOnly) {
+        if (!isBaseModule(apkModule) || signOnly) {
             apkModule.destroy()
             progressState.completeStep(patchStepIndex)
             return originalApk
