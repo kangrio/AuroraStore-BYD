@@ -134,10 +134,11 @@ A curated list of apps and tools that work great on BYD Android head units (DiLi
 
 ### 🗺️ Navigation
 
-| App             | Description                            | Link                       |
-|-----------------|----------------------------------------|----------------------------|
-| **Google Maps** | Full-featured navigation and maps      | Available via Aurora Store |
-| **Waze**        | Community-based traffic and navigation | Available via Aurora Store |
+| App             | Description                                                                       | Link                       |
+|-----------------|-----------------------------------------------------------------------------------|----------------------------|
+| **Google Maps** | Full-featured navigation and maps                                                 | Available via Aurora Store |
+| **Waze**        | Community-based traffic and navigation                                            | Available via Aurora Store |
+| **Radarbot**    | Speed camera & radar detector — supported version **8.8.4 (build 189) and below** | Available via Aurora Store |
 
 ### 🎵 Media & Entertainment
 
