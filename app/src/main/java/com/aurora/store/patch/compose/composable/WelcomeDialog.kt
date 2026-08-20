@@ -96,7 +96,7 @@ object WelcomeDialog {
                     Text(
                         text = "Packaged and signed independently for BYD head units, with rootless " +
                                 "microG/GmsCore patching so apps run without root access. See the " +
-                                "README-BYD.md in the repository for build-specific notes and known " +
+                                "README.md in the repository for build-specific notes and known " +
                                 "limitations on this platform.",
                         style = MaterialTheme.typography.bodySmall,
                     )
