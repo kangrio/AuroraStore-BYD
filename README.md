@@ -3,6 +3,9 @@
 A custom build of Aurora Store tailored for BYD Android-based head units.
 
 ---
+![Stars](https://img.shields.io/github/stars/kangrio/AuroraStore-BYD) ![Forks](https://img.shields.io/github/forks/kangrio/AuroraStore-BYD) ![Downloads](https://img.shields.io/github/downloads/kangrio/AuroraStore-BYD/total) ![Release](https://img.shields.io/github/v/release/kangrio/AuroraStore-BYD)
+
+![Open Issues](https://img.shields.io/github/issues-raw/kangrio/AuroraStore-BYD) ![Closed Issues](https://img.shields.io/github/issues-closed-raw/kangrio/AuroraStore-BYD) ![License](https://img.shields.io/github/license/kangrio/AuroraStore-BYD) ![Last Commit](https://img.shields.io/github/last-commit/kangrio/AuroraStore-BYD)
 
 ## 🚀 How to Get Started
 
