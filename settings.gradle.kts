@@ -29,6 +29,7 @@ dependencyResolutionManagement {
                 includeGroup("com.huawei.android.hms")
             }
         }
+        maven("https://maven.aliucord.com/releases")
     }
 }
 include(":app")

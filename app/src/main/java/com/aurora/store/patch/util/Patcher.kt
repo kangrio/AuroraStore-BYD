@@ -1,6 +1,7 @@
 package com.aurora.store.patch.util
 
 import android.content.Context
+import android.os.Build
 import android.util.Base64
 import com.aurora.store.BuildConfig
 import com.aurora.store.R
@@ -74,6 +75,7 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         val patchedApk = File.createTempFile("patched_${System.currentTimeMillis()}", ".apk")
 
         try {
+            addLib(apkModule)
             patchAndroidManifest(apkModule, getSignatureBase64(apkModule))
             addPatchedDexToApk(apkModule)
             replaceMicroGProfiles(apkModule)
@@ -117,6 +119,24 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
             }
         }
         return ""
+    }
+
+    fun addLib(apkModule: ApkModule) {
+        val libs = listOf("libaliuhook.so", "liblsplant.so")
+        Build.SUPPORTED_ABIS?.forEach { abi ->
+            libs.forEach { libName ->
+                try {
+                    val inputPath = "patch/lib/$abi/$libName"
+                    val libInputStream: InputStream = context.assets.open(inputPath)
+                    val libBytes = libInputStream.readBytes()
+                    libInputStream.close()
+
+                    val lib = ByteInputSource(libBytes, "lib/$abi/$libName")
+                    apkModule.add(lib)
+                } catch (_: Throwable) {
+                }
+            }
+        }
     }
 
     fun addMetaData(apkModule: ApkModule, name: String, value: Any, valueType: ValueType = ValueType.STRING) {

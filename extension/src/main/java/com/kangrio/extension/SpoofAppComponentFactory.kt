@@ -10,7 +10,7 @@ import android.content.ContentProvider
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.util.Log
-import org.lsposed.hiddenapibypass.HiddenApiBypass
+import inc.whew.android.fakegapps.FakeSignatures
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
@@ -20,8 +20,9 @@ class SpoofAppComponentFactory: AppComponentFactory() {
     var  checkCompatWrapper: Method? = null
 
     init {
+        FakeSignatures.init()
+
         try {
-            HiddenApiBypass.addHiddenApiExemptions("L")
             coreComponentFactory = Class.forName("androidx.core.app.CoreComponentFactory")
             checkCompatWrapper = coreComponentFactory?.declaredMethods?.firstOrNull { m ->
                 Modifier.isStatic(m.modifiers) &&       // static
@@ -33,8 +34,6 @@ class SpoofAppComponentFactory: AppComponentFactory() {
             }
 
         }catch (_: Throwable) {}
-
-        SpoofUtil.killPM()
     }
 
     override fun instantiateActivity(

@@ -51,7 +51,7 @@ android {
 }
 
 dependencies {
-    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
+    implementation("com.aliucord:Aliuhook:1.1.4")
 }
 
 abstract class BuildExtensionTask : DefaultTask() {
