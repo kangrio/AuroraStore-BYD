@@ -137,6 +137,11 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
                 }
             }
         }
+
+        val application: ResXmlElement = apkModule.androidManifest.applicationElement
+        application.getOrCreateAndroidAttribute(
+            "extractNativeLibs", android.R.attr.extractNativeLibs
+        ).valueAsBoolean = true
     }
 
     fun addMetaData(apkModule: ApkModule, name: String, value: Any, valueType: ValueType = ValueType.STRING) {
