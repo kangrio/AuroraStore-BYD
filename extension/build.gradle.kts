@@ -13,6 +13,7 @@ kotlin {
         freeCompilerArgs.addAll(
             "-Xno-param-assertions",
             "-Xno-call-assertions",
+            "-Xno-receiver-assertions",
         )
     }
 }

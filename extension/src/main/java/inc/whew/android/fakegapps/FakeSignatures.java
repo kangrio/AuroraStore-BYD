@@ -22,6 +22,7 @@ import java.security.cert.CertificateFactory;
 import java.util.AbstractMap.SimpleEntry;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 
 public class FakeSignatures {
@@ -30,26 +31,47 @@ public class FakeSignatures {
 
     private static final String[] gmsBundle = new String[]{ "com.google.android.gms", "com.android.vending" };
 
-    private static String getX509cert(String packageName, Bundle metaData) {
-        boolean isGms = false;
-        for (String pkg : gmsBundle) {
-            if (pkg.equals(packageName)) {
-                isGms = true;
-                break;
-            }
-        }
-
-        final String _x509cert;
-        if (isGms) {
-            _x509cert = _GMSx509cert;
-        } else {
-            _x509cert = metaData.getString("org.microg.gms.spoofed_certificates");
-        }
-        return _x509cert;
-    }
-    public static void init() throws ClassNotFoundException {
+    public static void init() {
         XposedBridge.disableHiddenApiRestrictions();
+        packageInfoHook();
+        getInstallerPackageNameHook();
+        pairipHook();
+    }
 
+    private static void hookAllMethods(Class<?> hookClass, String methodName, XC_MethodHook callback) {
+        try {
+            XposedBridge.hookAllMethods(hookClass, methodName, callback);
+            log("Hooked " + hookClass.getName() + "." + methodName);
+        } catch (Throwable e) {
+            log(e);
+        }
+    }
+
+    private static void hookAllMethods(String hookClassName, String methodName, XC_MethodHook callback) {
+        try {
+            Class<?> hookClass = Class.forName(hookClassName);
+            hookAllMethods(hookClass, methodName, callback);
+        } catch (Throwable e) {
+            log(e);
+        }
+    }
+
+    private static void pairipHook() {
+        XC_MethodHook processResponseHook = new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) {
+                param.args[0] = 0;
+            }
+        };
+
+        hookAllMethods("com.pairip.licensecheck.ResponseValidator", "validateResponse", XC_MethodReplacement.DO_NOTHING);
+        hookAllMethods("com.pairip.licensecheck.LicenseClient", "processResponse", processResponseHook);
+
+        hookAllMethods("com.pairip.licensecheck3.ResponseValidator", "validateResponse", XC_MethodReplacement.DO_NOTHING);
+        hookAllMethods("com.pairip.licensecheck3.LicenseClientV3", "processResponse", processResponseHook);
+    }
+
+    private static void packageInfoHook() {
         XC_MethodHook hook = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
@@ -92,7 +114,37 @@ public class FakeSignatures {
             }
         };
 
-        XposedBridge.hookAllMethods(Class.forName("android.app.ApplicationPackageManager"), "getPackageInfo", hook);
+        hookAllMethods("android.app.ApplicationPackageManager", "getPackageInfo", hook);
+    }
+
+    private static void getInstallerPackageNameHook() {
+        XC_MethodHook hook = new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                param.setResult("com.android.vending");
+            }
+        };
+
+        hookAllMethods("android.app.ApplicationPackageManager", "getInstallerPackageName", hook);
+        hookAllMethods("android.content.pm.InstallSourceInfo", "getInstallingPackageName", hook);
+    }
+
+    private static String getX509cert(String packageName, Bundle metaData) {
+        boolean isGms = false;
+        for (String pkg : gmsBundle) {
+            if (pkg.equals(packageName)) {
+                isGms = true;
+                break;
+            }
+        }
+
+        final String _x509cert;
+        if (isGms) {
+            _x509cert = _GMSx509cert;
+        } else {
+            _x509cert = metaData.getString("org.microg.gms.spoofed_certificates");
+        }
+        return _x509cert;
     }
 
     public static String sigToShar1(Signature sig) {
