@@ -4,7 +4,7 @@ import de.robv.android.xposed.XC_MethodHook
 
 object InstallerHook : AbstractHook() {
     override val TAG: String = "InstallerHook"
-    fun init() {
+    override fun init() {
         getInstallerPackageNameHook()
     }
 

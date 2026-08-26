@@ -69,6 +69,10 @@ abstract class BuildExtensionTask : DefaultTask() {
     }
 }
 
+tasks.matching { it.name == "preBuild" }.configureEach {
+    dependsOn("clean")
+}
+
 tasks.register<BuildExtensionTask>("buildExtension") {
     dependsOn("assembleRelease")
 }

@@ -7,7 +7,7 @@ import java.io.IOException
 object BypassRootHook : AbstractHook() {
     override val TAG = "BypassRoot"
 
-    fun init() {
+    override fun init() {
         rootBypassHook()
     }
 

@@ -4,10 +4,14 @@ import android.util.Log
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 
-abstract class AbstractHook {
+abstract class AbstractHook : IAbstractHook {
     open val TAG: String = "AbstractHook"
 
-    fun hookAllMethods(hookClass: Class<*>, methodName: String, callback: XC_MethodHook) {
+    override fun init() {
+        log("Init")
+    }
+
+    override fun hookAllMethods(hookClass: Class<*>, methodName: String, callback: XC_MethodHook) {
         try {
             XposedBridge.hookAllMethods(hookClass, methodName, callback)
             log("Hooked " + hookClass.getName() + "." + methodName)
@@ -16,7 +20,7 @@ abstract class AbstractHook {
         }
     }
 
-    fun hookAllMethods(hookClassName: String, methodName: String, callback: XC_MethodHook) {
+    override fun hookAllMethods(hookClassName: String, methodName: String, callback: XC_MethodHook) {
         try {
             val hookClass = Class.forName(hookClassName)
             hookAllMethods(hookClass, methodName, callback)
@@ -25,7 +29,7 @@ abstract class AbstractHook {
         }
     }
 
-    fun log(msg: Any) {
+    override fun log(msg: Any) {
         Log.v(TAG, msg.toString())
     }
 

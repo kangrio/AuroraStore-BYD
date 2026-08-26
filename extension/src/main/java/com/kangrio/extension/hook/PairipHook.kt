@@ -6,7 +6,7 @@ import de.robv.android.xposed.XC_MethodReplacement
 object PairipHook : AbstractHook() {
     override val TAG: String = "PairipHook"
 
-    fun init() {
+    override fun init() {
         pairipHook()
     }
 
