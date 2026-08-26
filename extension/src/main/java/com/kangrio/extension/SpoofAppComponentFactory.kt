@@ -10,7 +10,6 @@ import android.content.ContentProvider
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.util.Log
-import inc.whew.android.fakegapps.FakeSignatures
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
@@ -20,7 +19,7 @@ class SpoofAppComponentFactory: AppComponentFactory() {
     var  checkCompatWrapper: Method? = null
 
     init {
-        FakeSignatures.init()
+        MainHook.init()
 
         try {
             coreComponentFactory = Class.forName("androidx.core.app.CoreComponentFactory")

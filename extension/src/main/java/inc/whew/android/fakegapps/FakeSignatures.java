@@ -22,7 +22,6 @@ import java.security.cert.CertificateFactory;
 import java.util.AbstractMap.SimpleEntry;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 
 public class FakeSignatures {
@@ -32,10 +31,7 @@ public class FakeSignatures {
     private static final String[] gmsBundle = new String[]{ "com.google.android.gms", "com.android.vending" };
 
     public static void init() {
-        XposedBridge.disableHiddenApiRestrictions();
         packageInfoHook();
-        getInstallerPackageNameHook();
-        pairipHook();
     }
 
     private static void hookAllMethods(Class<?> hookClass, String methodName, XC_MethodHook callback) {
@@ -54,21 +50,6 @@ public class FakeSignatures {
         } catch (Throwable e) {
             log(e);
         }
-    }
-
-    private static void pairipHook() {
-        XC_MethodHook processResponseHook = new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) {
-                param.args[0] = 0;
-            }
-        };
-
-        hookAllMethods("com.pairip.licensecheck.ResponseValidator", "validateResponse", XC_MethodReplacement.DO_NOTHING);
-        hookAllMethods("com.pairip.licensecheck.LicenseClient", "processResponse", processResponseHook);
-
-        hookAllMethods("com.pairip.licensecheck3.ResponseValidator", "validateResponse", XC_MethodReplacement.DO_NOTHING);
-        hookAllMethods("com.pairip.licensecheck3.LicenseClientV3", "processResponse", processResponseHook);
     }
 
     private static void packageInfoHook() {
@@ -115,18 +96,6 @@ public class FakeSignatures {
         };
 
         hookAllMethods("android.app.ApplicationPackageManager", "getPackageInfo", hook);
-    }
-
-    private static void getInstallerPackageNameHook() {
-        XC_MethodHook hook = new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) {
-                param.setResult("com.android.vending");
-            }
-        };
-
-        hookAllMethods("android.app.ApplicationPackageManager", "getInstallerPackageName", hook);
-        hookAllMethods("android.content.pm.InstallSourceInfo", "getInstallingPackageName", hook);
     }
 
     private static String getX509cert(String packageName, Bundle metaData) {
