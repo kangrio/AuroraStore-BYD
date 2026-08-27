@@ -33,7 +33,7 @@ class SpoofAppComponentFactory: AppComponentFactory() {
             }
 
         }catch (_: Throwable) {}
-
+        SpoofInstallerSource.init()
         SpoofUtil.killPM()
     }
 
