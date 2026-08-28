@@ -9,6 +9,7 @@ import com.aurora.store.patch.state.PatchProgressState
 import com.reandroid.apk.ApkModule
 import com.reandroid.app.AndroidManifest
 import com.reandroid.archive.ByteInputSource
+import com.reandroid.arsc.chunk.xml.AndroidManifestBlock
 import com.reandroid.arsc.chunk.xml.ResXmlElement
 import com.reandroid.arsc.value.ValueType
 import java.io.File
@@ -171,7 +172,35 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         // source https://github.com/microg/GmsCore/blob/master/play-services-core/src/huawei/AndroidManifest.xml
         if (apkModule.packageName == MICROG_PACKAGE_NAME) {
             applyMicroGSettings(apkModule)
+            addPoTokenProxy(apkModule)
         }
+    }
+
+    fun addPoTokenProxy(apkModule: ApkModule) {
+        val application: ResXmlElement = apkModule.androidManifest.applicationElement
+        val poTokenService = application.elements.asSequence().firstOrNull {
+            it.getOrCreateAndroidAttribute(null, android.R.attr.name).valueAsString == "org.microg.gms.potokens.PoTokensService"
+        }
+
+        poTokenService?.let {
+            it.getOrCreateAndroidAttribute(null, android.R.attr.name)?.valueAsString = "com.kangrio.extension.gms.PoTokensServiceProxy"
+        }
+
+        application.newElementAt(poTokenService?.index ?: application.size(), AndroidManifestBlock.TAG_service).apply {
+            this.getOrCreateAndroidAttribute(null, android.R.attr.name).valueAsString = "org.microg.gms.potokens.PoTokensService"
+        }
+
+//        val poTokensServiceProxy = application.newElementAt(poTokenService?.index ?: application.size(), AndroidManifestBlock.TAG_service).apply {
+//            this.getOrCreateAndroidAttribute(null, android.R.attr.name).valueAsString = "com.kangrio.extension.gms.PoTokensServiceProxy"
+//            this.getOrCreateAndroidAttribute(null, android.R.attr.exported).setValueAsBoolean(true)
+//        }
+//        val intentFilter = poTokensServiceProxy.getOrCreateElement(AndroidManifestBlock.TAG_intent_filter).apply {
+//            this.getOrCreateAndroidAttribute(null, android.R.attr.priority).setValueAsDecimal(1000)
+//        }
+//        // todo: need to fix apk not be correct cannot parsing
+//        intentFilter.getOrCreateElement(AndroidManifestBlock.TAG_action).apply {
+//            this.getOrCreateAndroidAttribute(null, android.R.attr.name).valueAsString = "com.google.android.gms.potokens.service.START"
+//        }
     }
 
     fun applyMicroGSettings(apkModule: ApkModule) {

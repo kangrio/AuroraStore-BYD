@@ -54,6 +54,9 @@ android {
 dependencies {
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
     compileOnly(project(":extension:stub"))
+    compileOnly("org.microg:safe-parcel:1.7.1")
+    compileOnly("androidx.lifecycle:lifecycle-runtime:2.11.0")
+    compileOnly("androidx.lifecycle:lifecycle-service:2.11.0")
 }
 
 abstract class BuildExtensionTask : DefaultTask() {

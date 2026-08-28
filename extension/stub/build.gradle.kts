@@ -7,9 +7,17 @@ android {
     compileSdk {
         version = release(36)
     }
+    buildFeatures {
+        aidl = true
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+dependencies {
+    compileOnly("org.microg:safe-parcel:1.7.1")
+    compileOnly("androidx.lifecycle:lifecycle-runtime:2.11.0")
+    compileOnly("androidx.lifecycle:lifecycle-service:2.11.0")
 }
