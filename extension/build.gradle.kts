@@ -13,6 +13,7 @@ kotlin {
         freeCompilerArgs.addAll(
             "-Xno-param-assertions",
             "-Xno-call-assertions",
+            "-Xno-receiver-assertions",
         )
     }
 }
@@ -52,6 +53,7 @@ android {
 
 dependencies {
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
+    compileOnly(project(":extension:stub"))
 }
 
 abstract class BuildExtensionTask : DefaultTask() {

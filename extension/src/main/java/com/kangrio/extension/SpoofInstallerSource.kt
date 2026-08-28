@@ -1,5 +1,7 @@
 package com.kangrio.extension
 
+import android.app.ActivityThread
+import android.content.pm.IPackageManager
 import android.content.pm.InstallSourceInfo
 import android.os.Build
 import android.os.Parcel
@@ -9,30 +11,29 @@ import java.lang.reflect.Proxy
 
 class SpoofInstallerSource {
     companion object {
+        const val PLAY_STORE_PACKAGE_NAME = "com.android.vending"
         fun init() {
             getInstallerPackageName()
             installSourceInfo()
         }
 
         fun getInstallerPackageName() {
-            val activityThreadClass = Class.forName("android.app.ActivityThread")
-            val iPackageManagerClass = Class.forName("android.content.pm.IPackageManager")
-            val field = activityThreadClass
+            val field = ActivityThread::class.java
                 .getDeclaredField("sPackageManager")
                 .apply {
                     isAccessible = true
                 }
 
 
-            val original = iPackageManagerClass.cast(field.get(null))
+            val original = field.get(null) ?: ActivityThread.getPackageManager()
 
             val proxy = Proxy.newProxyInstance(
-                iPackageManagerClass.classLoader,
-                arrayOf(iPackageManagerClass)
+                IPackageManager::class.java.classLoader,
+                arrayOf(IPackageManager::class.java)
             ) { _, method, args ->
 
                 if (method.name.equals("getInstallerPackageName")) {
-                    "com.android.vending"
+                    PLAY_STORE_PACKAGE_NAME
                 } else {
                     method.invoke(original, *(args ?: emptyArray()))
                 }
@@ -49,15 +50,16 @@ class SpoofInstallerSource {
                 override fun createFromParcel(source: Parcel): InstallSourceInfo? {
                     source.recycle()
 
+                    // https://android.googlesource.com/platform/frameworks/base/+/main/core/java/android/content/pm/InstallSourceInfo.java#71
                     val newSource = Parcel.obtain()
-                    newSource.writeString("com.android.vending")
-                    newSource.writeParcelable(null, 0)
-                    newSource.writeString("com.android.vending")
-                    newSource.writeString("com.android.vending")
-                    newSource.writeString("com.android.vending")
-                    newSource.writeInt(2)
-                    newSource.setDataPosition(0)
+                    newSource.writeString(PLAY_STORE_PACKAGE_NAME)     // mInitiatingPackageName
+                    newSource.writeParcelable(null, 0)  // mInitiatingPackageSigningInfo
+                    newSource.writeString(PLAY_STORE_PACKAGE_NAME)     // mOriginatingPackageName
+                    newSource.writeString(PLAY_STORE_PACKAGE_NAME)     // mInstallingPackageName
+                    newSource.writeString(PLAY_STORE_PACKAGE_NAME)     // mUpdateOwnerPackageName
+                    newSource.writeInt(2)                              // mPackageSource
 
+                    newSource.setDataPosition(0)
                     return originalCreator.createFromParcel(newSource)
                 }
 
