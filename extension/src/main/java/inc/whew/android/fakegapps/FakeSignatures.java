@@ -1,3 +1,8 @@
+/**
+ * Source: https://github.com/whew-inc/FakeGApps/blob/master/app/src/main/java/inc/whew/android/fakegapps/FakeSignatures.java
+ * This modified for none-root device
+ */
+
 package inc.whew.android.fakegapps;
 
 import android.annotation.TargetApi;
