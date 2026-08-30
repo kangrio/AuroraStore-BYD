@@ -1,8 +1,9 @@
 package com.kangrio.extension.hook
 
+import com.kangrio.extension.hook.base.AbstractHook
 import de.robv.android.xposed.XC_MethodHook
 
-object InstallerHook : AbstractHook() {
+class Hook1 : AbstractHook() {
     override val TAG: String = "InstallerHook"
     override fun init() {
         getInstallerPackageNameHook()

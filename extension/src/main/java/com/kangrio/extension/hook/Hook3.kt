@@ -1,10 +1,11 @@
 package com.kangrio.extension.hook
 
+import com.kangrio.extension.hook.base.AbstractHook
 import de.robv.android.xposed.XC_MethodHook
 import java.io.File
 import java.io.IOException
 
-object BypassRootHook : AbstractHook() {
+class Hook3 : AbstractHook() {
     override val TAG = "BypassRoot"
 
     override fun init() {

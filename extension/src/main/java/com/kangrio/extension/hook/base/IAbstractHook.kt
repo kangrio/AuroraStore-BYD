@@ -1,4 +1,4 @@
-package com.kangrio.extension.hook
+package com.kangrio.extension.hook.base
 
 import de.robv.android.xposed.XC_MethodHook
 

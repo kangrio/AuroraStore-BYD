@@ -1,15 +1,13 @@
-package com.kangrio.extension.hook
+package com.kangrio.extension.hook.base
 
 import android.util.Log
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 
 abstract class AbstractHook : IAbstractHook {
-    open val TAG: String = "AbstractHook"
+    abstract val TAG: String
 
-    override fun init() {
-        log("Init")
-    }
+    abstract override fun init()
 
     override fun hookAllMethods(hookClass: Class<*>, methodName: String, callback: XC_MethodHook) {
         try {
@@ -31,11 +29,5 @@ abstract class AbstractHook : IAbstractHook {
 
     override fun log(msg: Any) {
         Log.v(TAG, msg.toString())
-    }
-
-    companion object {
-        init {
-            XposedBridge.disableHiddenApiRestrictions()
-        }
     }
 }

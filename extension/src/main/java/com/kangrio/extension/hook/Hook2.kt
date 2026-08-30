@@ -1,9 +1,10 @@
 package com.kangrio.extension.hook
 
+import com.kangrio.extension.hook.base.AbstractHook
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement
 
-object PairipHook : AbstractHook() {
+class Hook2 : AbstractHook() {
     override val TAG: String = "PairipHook"
 
     override fun init() {
