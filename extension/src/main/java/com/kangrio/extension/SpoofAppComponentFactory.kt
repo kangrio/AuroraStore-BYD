@@ -33,8 +33,7 @@ class SpoofAppComponentFactory: AppComponentFactory() {
             }
 
         }catch (_: Throwable) {}
-        SpoofInstallerSource.init()
-        SpoofUtil.killPM()
+        PackageManagerProxy.init()
     }
 
     override fun instantiateActivity(
