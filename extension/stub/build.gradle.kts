@@ -7,6 +7,12 @@ android {
     compileSdk {
         version = release(36)
     }
+    defaultConfig {
+        minSdk = 24
+    }
+    buildFeatures {
+        aidl = true
+    }
 }
 
 java {
