@@ -69,7 +69,11 @@ object PackageUtilPatch {
     }
 
     fun isMorphePatch(context: Context, packageName: String): Boolean {
-        val morpheVersion = morpheVersion(context, packageName)
-        return morpheVersion != Int.MAX_VALUE
+        return try {
+            val packageInfo = PackageUtil.getPackageInfo(context, packageName, PackageManager.GET_META_DATA)
+            packageInfo.applicationInfo?.metaData?.containsKey("morphe_version") == true
+        } catch (_: Throwable) {
+            false
+        }
     }
 }

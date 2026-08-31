@@ -14,6 +14,9 @@ import com.reandroid.arsc.value.ValueType
 import java.io.File
 import java.io.InputStream
 
+/**
+ * Avoid modifying the DEX to reduce patching time.
+ */
 class Patcher(val context: Context, val packageName: String, val apkFiles: List<File>) {
     private val progressMessages = apkFiles.flatMap {
         listOf(
