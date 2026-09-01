@@ -166,7 +166,6 @@ public class PackageManagerProxy extends Binder {
     }
 
     private PackageInfo getPackageInfoInternal(String pkg, int flags) {
-        PackageInfo packageInfo = null;
         try {
             Method method = iPackageManager.getClass().getMethod(
                     "getPackageInfo",
@@ -175,15 +174,14 @@ public class PackageManagerProxy extends Binder {
                     int.class
             );
 
-            packageInfo = (PackageInfo) method.invoke(
-                    iPackageManager,
-                    pkg,
-                    Build.VERSION.SDK_INT >= 33 ? (long) flags : flags,
-                    userId
-            );
-        } catch (Throwable ignore) {}
+            Object packageInfo = Build.VERSION.SDK_INT >= 33
+                    ? method.invoke(iPackageManager, pkg, (long) flags, userId)
+                    : method.invoke(iPackageManager, pkg, flags, userId);
 
-        return packageInfo;
+            return (PackageInfo) packageInfo;
+        } catch (Throwable e) {
+            return null;
+        }
     }
 
     private boolean getInstallSourceInfo(int code, @NonNull Parcel data, @Nullable Parcel reply, int flags) throws RemoteException {
