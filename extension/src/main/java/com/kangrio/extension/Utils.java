@@ -13,6 +13,7 @@ import android.util.Pair;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -162,9 +163,35 @@ public class Utils {
         return null;
     }
 
+    public static Field getField(Class<?> cls, String fieldName) {
+        Class<?> currentClass = cls;
+        while (currentClass != null) {
+            try {
+                Field field = currentClass.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                return field;
+            } catch (NoSuchFieldException e) {
+                currentClass = currentClass.getSuperclass();
+            }
+        }
+        return null;
+    }
+
+    public static Object getFieldValue(Class<?> cls, String fieldName, Object instance) {
+        try {
+            Field field = getField(cls, fieldName);
+            if (field == null) {
+                return null;
+            }
+
+            return field.get(instance);
+        } catch (Throwable e) {
+            return null;
+        }
+    }
 
     @SafeVarargs
-    private static <T> T invokeFirstConstructor(
+    public static <T> T invokeFirstConstructor(
             Class<T> cls,
             AbstractMap.SimpleEntry<Class<?>[], Object[]>... candidates
     ) throws ReflectiveOperationException {
@@ -184,7 +211,7 @@ public class Utils {
         throw exc;
     }
 
-    private static Class<?> findFirstLoadableClass(String... candidates) throws ClassNotFoundException {
+    public static Class<?> findFirstLoadableClass(String... candidates) throws ClassNotFoundException {
         ClassNotFoundException exc = new ClassNotFoundException();
         for (String candidate : candidates) {
             try {
