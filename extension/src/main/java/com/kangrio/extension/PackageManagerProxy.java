@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,6 @@ public class PackageManagerProxy extends Binder {
             PackageManagerProxy proxy = new PackageManagerProxy();
             ArrayMap<String, IBinder> sCache = (ArrayMap<String, IBinder>) Utils.getFieldValue(ServiceManager.class, SERVICE_CACHE_FIELD_NAME, null);
             if (sCache != null) {
-                sCache.clear();
                 sCache.put(PACKAGE_MANAGER_SERVICE_NAME, proxy);
             }
 
@@ -127,14 +127,22 @@ public class PackageManagerProxy extends Binder {
         int position = data.dataPosition();
         data.enforceInterface(IPackageManager.Stub.DESCRIPTOR);
         String pkg = data.readString();
-        int flags2 = data.readInt();
+
+        // Android 13+ uses long flags.
+        // https://android.googlesource.com/platform/frameworks/base/+/android13-release/core/java/android/content/pm/IPackageManager.aidl#72
+        final long flags2;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            flags2 = data.readLong();
+        } else {
+            flags2 = Integer.toUnsignedLong(data.readInt());
+        }
         data.setDataPosition(position);
 
         if ((flags2 & PackageManager.GET_SIGNATURES) == 0 && (flags2 & PackageManager.GET_SIGNING_CERTIFICATES) == 0) {
             return transactOriginal(code, data, reply, flags);
         }
 
-        PackageInfo packageInfo = iPackageManager.getPackageInfo(pkg, PackageManager.GET_META_DATA, userId);
+        PackageInfo packageInfo = getPackageInfoInternal(pkg, PackageManager.GET_META_DATA);
         if (packageInfo == null || packageInfo.applicationInfo == null) {
             return transactOriginal(code, data, reply, flags);
         }
@@ -155,6 +163,27 @@ public class PackageManagerProxy extends Binder {
         packageInfo.writeToParcel(reply, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
 
         return true;
+    }
+
+    private PackageInfo getPackageInfoInternal(String pkg, int flags) {
+        PackageInfo packageInfo = null;
+        try {
+            Method method = iPackageManager.getClass().getMethod(
+                    "getPackageInfo",
+                    String.class,
+                    Build.VERSION.SDK_INT >= 33 ? long.class : int.class,
+                    int.class
+            );
+
+            packageInfo = (PackageInfo) method.invoke(
+                    iPackageManager,
+                    pkg,
+                    Build.VERSION.SDK_INT >= 33 ? (long) flags : flags,
+                    userId
+            );
+        } catch (Throwable ignore) {}
+
+        return packageInfo;
     }
 
     private boolean getInstallSourceInfo(int code, @NonNull Parcel data, @Nullable Parcel reply, int flags) throws RemoteException {
@@ -207,7 +236,7 @@ public class PackageManagerProxy extends Binder {
             return false;
         }
 
-        PackageInfo packageInfo = iPackageManager.getPackageInfo(pkg, 0, userId);
+        PackageInfo packageInfo = getPackageInfoInternal(pkg, 0);
         ApplicationInfo appInfo = packageInfo != null ? packageInfo.applicationInfo : null;
 
         return appInfo != null && (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
