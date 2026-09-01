@@ -161,7 +161,7 @@ public class PackageManagerProxy extends Binder {
         reply.writeNoException();
         reply.writeInt(1);
         packageInfo.writeToParcel(reply, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
-
+        reply.setDataPosition(0);
         return true;
     }
 
@@ -211,6 +211,7 @@ public class PackageManagerProxy extends Binder {
         reply.writeNoException();
         reply.writeInt(1);
         info.writeToParcel(reply, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        reply.setDataPosition(0);
         return true;
     }
 
@@ -221,6 +222,7 @@ public class PackageManagerProxy extends Binder {
 
         reply.writeNoException();
         reply.writeString(PLAY_STORE_PACKAGE_NAME);
+        reply.setDataPosition(0);
         return true;
     }
 
