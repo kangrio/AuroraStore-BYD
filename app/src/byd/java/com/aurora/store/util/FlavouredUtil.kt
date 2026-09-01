@@ -26,7 +26,7 @@ object FlavouredUtil : IFlavouredUtil {
                     if (!gmsSupportsSpoofing) add("MicroG Service")
                     if (!playStoreSupportsSpoofing) add("MicroG Companion")
                 }.joinToString(" and ")
-                showToast(context, "$incompatibleComponents does not support spoofed certificates. Please uninstall it and install the compatible version from this AuroraStore.")
+                showToast(context, "$incompatibleComponents doesn't support certificate spoofing. Install a compatible version from this.")
             }
         }
 
