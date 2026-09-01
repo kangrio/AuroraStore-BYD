@@ -7,6 +7,7 @@ import android.content.pm.IPackageManager;
 import android.content.pm.InstallSourceInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.SigningInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -195,19 +196,21 @@ public class PackageManagerProxy extends Binder {
 
         // https://android.googlesource.com/platform/frameworks/base/+/main/core/java/android/content/pm/InstallSourceInfo.java#71
         Parcel newSource = Parcel.obtain();
-        newSource.writeString(PLAY_STORE_PACKAGE_NAME);                                // mInitiatingPackageName
-        newSource.writeParcelable(null, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);     // mInitiatingPackageSigningInfo
-        newSource.writeString(PLAY_STORE_PACKAGE_NAME);                                // mOriginatingPackageName
-        newSource.writeString(PLAY_STORE_PACKAGE_NAME);                                // mInstallingPackageName
+        SigningInfo signingInfo = Utils.getPlayStoreSigningInfo();
+        newSource.writeString(PLAY_STORE_PACKAGE_NAME);                                   // mInitiatingPackageName
+        newSource.writeParcelable(signingInfo, Parcelable.PARCELABLE_WRITE_RETURN_VALUE); // mInitiatingPackageSigningInfo
+        newSource.writeString(PLAY_STORE_PACKAGE_NAME);                                   // mOriginatingPackageName
+        newSource.writeString(PLAY_STORE_PACKAGE_NAME);                                   // mInstallingPackageName
         try {
             // mUpdateOwnerPackageName
             Parcel.class.getDeclaredMethod("writeString8", String.class).invoke(newSource, PLAY_STORE_PACKAGE_NAME);
         } catch (Throwable ignore) {
         }
-        newSource.setDataPosition(0);
 
+        newSource.setDataPosition(0);
         InstallSourceInfo info = InstallSourceInfo.CREATOR.createFromParcel(newSource);
         newSource.recycle();
+
         reply.writeNoException();
         reply.writeInt(1);
         info.writeToParcel(reply, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);

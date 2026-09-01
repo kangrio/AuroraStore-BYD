@@ -96,6 +96,32 @@ public class Utils {
         return packageInfo;
     }
 
+    public static SigningInfo getPlayStoreSigningInfo() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null;
+
+        Pair<Signature, SigningInfo> cache = mSignatureCache.get("com.android.vending");
+        if (cache != null) {
+            return cache.second;
+        }
+
+        byte[] signatureByte = Base64.decode(fakeGoogleSignatureData, Base64.DEFAULT);
+        Signature signature = new Signature(signatureByte);
+
+        final CertificateFactory certFactory;
+        final Certificate cert;
+        final SigningInfo signingInfo;
+        try {
+            certFactory = CertificateFactory.getInstance("X.509");
+            cert = certFactory.generateCertificate(new ByteArrayInputStream(signatureByte));
+            signingInfo = createSigningInfo(signature, cert.getPublicKey());
+        } catch (Throwable e) {
+            return null;
+        }
+
+        mSignatureCache.put("com.android.vending", Pair.create(signature, signingInfo));
+        return signingInfo;
+    }
+
     public static String sigToShar1(Signature sig) {
         // to shar1 string
         try {
