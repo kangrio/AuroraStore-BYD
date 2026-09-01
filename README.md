@@ -164,7 +164,8 @@ A curated list of apps and tools that work great on BYD Android head units (DiLi
 
 ### 🙏 Credits
 
-Original project:
-- [Aurora OSS / Aurora Store developers](https://github.com/whyorean/AuroraStore)
+- [Aurora Store (official)](https://github.com/whyorean/AuroraStore) An unofficial FOSS client to Google Play.
+- [ARSCLib](https://github.com/REAndroid/ARSCLib) Android binary resources read/write library
+- [AndroidHiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass) LSPass: Bypass restrictions on non-SDK interfaces
 
 ---
