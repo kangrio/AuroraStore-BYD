@@ -33,4 +33,5 @@ dependencyResolutionManagement {
 }
 include(":app")
 include(":extension")
+include(":extension:stub")
 rootProject.name = "AuroraStore4"
