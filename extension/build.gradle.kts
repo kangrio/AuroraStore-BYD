@@ -53,7 +53,7 @@ android {
 
 dependencies {
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
-    implementation("androidx.annotation:annotation:1.9.1")
+    compileOnly("androidx.annotation:annotation:1.9.1")
     compileOnly(project(":extension:stub"))
 }
 
