@@ -14,4 +14,5 @@ object ConstantsPatch {
     const val PATCH_APP_COMPONENT_FACTORY_CLASS = "com.kangrio.extension.SpoofAppComponentFactory"
     const val META_DATA_SPOOFED_CERTIFICATES = "org.microg.gms.spoofed_certificates"
     const val META_DATA_PATCH_VERSION_CODE = "com.kangrio.extension.patch_version_code"
+    const val META_DATA_ENABLE_CRASH_REPORT = "com.kangrio.extensions.enable_crash_report"
 }
