@@ -214,6 +214,9 @@ dependencies {
     // Icons
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
+    // Markdown
+    implementation("org.jetbrains:markdown:0.7.9")
+
     // patcher
     implementation("io.github.reandroid:ARSCLib:1.4.0")
     implementation("com.android.tools.build:apksig:8.8.0")

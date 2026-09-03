@@ -14,6 +14,9 @@ import com.aurora.store.R
 import com.aurora.store.util.CertUtil
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
+import org.intellij.markdown.html.HtmlGenerator
+import org.intellij.markdown.parser.MarkdownParser
 
 /**
  * Self-update feed entry returned by `release_feed.json` (vanilla release) and
@@ -62,7 +65,7 @@ data class SelfUpdate(
         packageName = context.packageName,
         versionCode = versionCode,
         versionName = versionName,
-        changes = changelog,
+        changes = changelog.toHtml(),
         size = size,
         updatedOn = updatedOn,
         displayName = context.getString(R.string.app_name),
@@ -86,4 +89,11 @@ data class SelfUpdate(
             EncodedCertificateSet(certificateSet = it, sha256 = String())
         }.toMutableList()
     )
+
+    fun String.toHtml(): String {
+        val flavour = CommonMarkFlavourDescriptor()
+        val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(this)
+        val html = HtmlGenerator(this, parsedTree, flavour).generateHtml()
+        return html
+    }
 }
