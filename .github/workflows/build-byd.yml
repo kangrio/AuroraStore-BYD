@@ -92,6 +92,22 @@ jobs:
           TAG="byd-${version}-$(date +'%Y%m%d')"
           echo "TAG=$TAG" >> $GITHUB_OUTPUT
 
+      - name: Generate release message
+        id: release
+        run: |
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          CURRENT_TAG="${{ steps.tag.outputs.TAG }}"
+      
+          echo "message<<EOF" >> "$GITHUB_OUTPUT"
+          echo "${{ steps.commit.outputs.message }}" >> "$GITHUB_OUTPUT"
+          echo "" >> "$GITHUB_OUTPUT"
+      
+          if [ -n "$PREVIOUS_TAG" ]; then
+            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_TAG}...${CURRENT_TAG}" >> "$GITHUB_OUTPUT"
+          fi
+      
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Generate release_feed.json
         env:
           TAG_NAME: ${{ steps.tag.outputs.TAG }}
@@ -126,7 +142,7 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.TAG }}
           name: ${{ steps.tag.outputs.TAG }}
-          body: ${{ steps.commit.outputs.message }}
+          body: ${{ steps.release.outputs.message }}
           files: |
             ${{ steps.apk-path.outputs.path }}
             release_feed.json
