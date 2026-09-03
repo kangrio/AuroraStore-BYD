@@ -1,3 +1,10 @@
+Changelog: v1.0.2
+• feat: add MicroG compatibility check
+• feat: add PackageManagerProxy
+• feat: add spoof installer source to fix apps that fail to open
+• feat: add crash reporting to existing GitHub issues (toggleable in settings)
+• fix: render Markdown correctly in self-update changelogs
+
 Changelog: v1.0.1
 • fix: isBaseModule check incorrect
 • fix: prevent duplicate apps in StreamCarousel (fixed random crash)

@@ -154,7 +154,7 @@ configure<ApplicationExtension> {
             applicationIdSuffix = ".byd"
 
             // 1-9 -> 0.0.X, 10-99 -> 0.X.X, 100-999 -> X.X.X, 1000+ -> XX.X.X
-            val bydVersionCode = 101
+            val bydVersionCode = 102
             val major = bydVersionCode / 100
             val minor = (bydVersionCode / 10) % 10
             val patch = bydVersionCode % 10
@@ -162,7 +162,9 @@ configure<ApplicationExtension> {
 
             versionNameSuffix = "-$bydVersionName"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
-            buildConfigField("int", "PATCH_VERSION_CODE", "1")
+
+            val patchVersionCode = 2
+            buildConfigField("int", "PATCH_VERSION_CODE", "$patchVersionCode")
         }
     }
 
