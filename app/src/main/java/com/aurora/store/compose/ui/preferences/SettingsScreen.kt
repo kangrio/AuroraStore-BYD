@@ -24,6 +24,16 @@ import com.aurora.store.compose.composable.TopAppBar
 import com.aurora.store.compose.navigation.Destination
 import com.aurora.store.compose.preview.ThemePreviewProvider
 import com.aurora.store.data.model.PermissionType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Circle
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.util.Preferences
 
 @Composable
 fun SettingsScreen(onNavigateTo: (Destination) -> Unit) {
@@ -136,6 +146,24 @@ private fun ScreenContent(onNavigateTo: (Destination) -> Unit = {}) {
                         )
                     },
                     headlineContent = { Text(stringResource(R.string.title_security)) }
+                )
+            }
+            item {
+                val context = LocalContext.current
+                var enable by remember { mutableStateOf(Preferences.getBoolean(context, ConstantsPatch.META_DATA_ENABLE_CRASH_REPORT, true)) }
+                ListItem(
+                    modifier = Modifier.clickable {
+                        enable = !enable
+                        Preferences.putBoolean(context, ConstantsPatch.META_DATA_ENABLE_CRASH_REPORT, enable)
+                    },
+                    leadingContent = {
+                        Icon(
+                            Icons.Filled.Circle,
+                            tint = if (enable) Color.Green else Color.Red,
+                            contentDescription = null
+                        )
+                    },
+                    headlineContent = { Text("Crash Report (${if (enable) "ON" else "OFF"})") }
                 )
             }
         }

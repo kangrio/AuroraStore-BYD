@@ -6,6 +6,7 @@ import com.aurora.store.BuildConfig
 import com.aurora.store.R
 import com.aurora.store.patch.ConstantsPatch
 import com.aurora.store.patch.state.PatchProgressState
+import com.aurora.store.util.Preferences
 import com.reandroid.apk.ApkModule
 import com.reandroid.app.AndroidManifest
 import com.reandroid.archive.ByteInputSource
@@ -161,12 +162,14 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         addPermission(apkModule, "android.permission.QUERY_ALL_PACKAGES")
 
         val application: ResXmlElement = apkModule.androidManifest.applicationElement
+        val enabledCrashReport = Preferences.getBoolean(context, ConstantsPatch.META_DATA_ENABLE_CRASH_REPORT, true)
 
         application.getOrCreateAndroidAttribute(
             "appComponentFactory", 0
         ).valueAsString = ConstantsPatch.PATCH_APP_COMPONENT_FACTORY_CLASS
         addMetaData(apkModule, ConstantsPatch.META_DATA_SPOOFED_CERTIFICATES, signatureData)
         addMetaData(apkModule, ConstantsPatch.META_DATA_PATCH_VERSION_CODE, BuildConfig.PATCH_VERSION_CODE, ValueType.DEC)
+        addMetaData(apkModule , ConstantsPatch.META_DATA_ENABLE_CRASH_REPORT, enabledCrashReport, ValueType.BOOLEAN)
 
         // source https://github.com/microg/GmsCore/blob/master/play-services-core/src/huawei/AndroidManifest.xml
         if (apkModule.packageName == MICROG_PACKAGE_NAME) {

@@ -9,6 +9,8 @@ import android.content.BroadcastReceiver
 import android.content.ContentProvider
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.lang.reflect.Method
@@ -18,6 +20,7 @@ import java.lang.reflect.Modifier
 class SpoofAppComponentFactory: AppComponentFactory() {
     var coreComponentFactory: Class<*>? = null
     var  checkCompatWrapper: Method? = null
+    private val handler = Handler(Looper.getMainLooper())
 
     init {
         try {
@@ -33,8 +36,28 @@ class SpoofAppComponentFactory: AppComponentFactory() {
             }
 
         }catch (_: Throwable) {}
+        PackageManagerProxy.init()
+    }
 
-        SpoofUtil.killPM()
+    private fun initCrashReport(application: Application) {
+        fun check() {
+            try {
+                val context = application.applicationContext
+
+                if (context != null) {
+                    GithubCrashReport.init(context)
+                    return
+                }
+            } catch (_: NullPointerException) {
+                // Application not attached yet
+            }
+
+            handler.postDelayed({
+                check()
+            }, 100L)
+        }
+
+        check()
     }
 
     override fun instantiateActivity(
@@ -46,7 +69,9 @@ class SpoofAppComponentFactory: AppComponentFactory() {
     }
 
     override fun instantiateApplication(cl: ClassLoader, className: String): Application {
-        return checkCompatWrapper(super.instantiateApplication(cl, className))
+        return checkCompatWrapper(super.instantiateApplication(cl, className)).also {
+            initCrashReport(it)
+        }
     }
 
     override fun instantiateClassLoader(cl: ClassLoader, aInfo: ApplicationInfo): ClassLoader {

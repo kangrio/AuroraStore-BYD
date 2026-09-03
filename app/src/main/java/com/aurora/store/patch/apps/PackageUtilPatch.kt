@@ -35,25 +35,26 @@ object PackageUtilPatch {
 
     fun isUpdatable(context: Context, packageName: String, versionCode: Long): Boolean {
         return try {
-            // original apps
-            if (packageName !in ExternalAppsPatch.apps.keys || !isMorphePatch(context, packageName)) {
-                try {
-                    if (isHasNewerPatch(context, packageName)) {
-                        return true
-                    }
+            // prebuild apk patched with morphe-patches
+            if (packageName in ExternalAppsPatch.apps.keys && isMorphePatch(context, packageName)) {
+                val currentVersion = morpheVersion(context, packageName)
+                val latestVersion = ExternalAppsPatch.getLatestRelease().tag_name.substring(1).replace(".", "").toInt()
 
-                    val packageInfo = PackageUtil.getPackageInfo(context, packageName)
-                    return versionCode > PackageInfoCompat.getLongVersionCode(packageInfo)
-                } catch (_: PackageManager.NameNotFoundException) {
-                    return false
-                }
+                // Int.MAX_VALUE make failed patch version code to be updatable
+                return latestVersion > currentVersion || currentVersion == Int.MAX_VALUE
             }
 
-            // fallback
-            // prebuild apk patched with morphe-patches
-            val currentVersion = morpheVersion(context, packageName)
-            val latestVersion = ExternalAppsPatch.getLatestRelease().tag_name.substring(1).replace(".", "").toInt()
-            return latestVersion > currentVersion
+            // original apps
+            try {
+                if (isHasNewerPatch(context, packageName)) {
+                    return true
+                }
+
+                val packageInfo = PackageUtil.getPackageInfo(context, packageName)
+                return versionCode > PackageInfoCompat.getLongVersionCode(packageInfo)
+            } catch (_: PackageManager.NameNotFoundException) {
+                return false
+            }
         } catch (_: Throwable) {
             false
         }

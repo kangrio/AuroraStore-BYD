@@ -83,6 +83,40 @@ Reasons include:
 
 ---
 
+## 🐛 Crash Reporting
+
+Every patched app includes optional crash reporting. **Crash reporting can be enabled or disabled from the settings.**
+
+When crash reporting is enabled and a patched app crashes, crash information is automatically sent to the crash-reporting server and added to the existing GitHub issue for that app. This helps identify and troubleshoot crashes across different BYD devices and Android versions.
+
+Crash reporting was added in [this commit](https://github.com/kangrio/AuroraStore-BYD/commit/1dbfe47c).
+
+The following information is included in each report:
+
+* **Android** — Android release version
+* **Build fingerprint** — device/build fingerprint
+* **Package** — application package name
+* **Version code** — installed app version code
+* **Version name** — installed app version name
+* **Report** — crash stack trace
+
+Example:
+
+```json
+{
+  "android": "12",
+  "buildfingerprint": "BYD AUTO/BYD-AUTO/BYD-AUTO:12/V417IR/320:user/release-keys",
+  "package": "com.example.app",
+  "versioncode": 123,
+  "versionname": "1.2.3",
+  "report": "java.lang.RuntimeException: ..."
+}
+```
+
+Crash reports are used to help debug patched apps and improve compatibility with BYD Android head units. Users can disable crash reporting at any time from the app settings.
+
+---
+
 ## 🚗 Tested Environment
 
 * BYD Android Head Unit (DiLink system)
@@ -164,7 +198,8 @@ A curated list of apps and tools that work great on BYD Android head units (DiLi
 
 ### 🙏 Credits
 
-Original project:
-- [Aurora OSS / Aurora Store developers](https://github.com/whyorean/AuroraStore)
+- [Aurora Store (official)](https://github.com/whyorean/AuroraStore) An unofficial FOSS client to Google Play.
+- [ARSCLib](https://github.com/REAndroid/ARSCLib) Android binary resources read/write library
+- [AndroidHiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass) LSPass: Bypass restrictions on non-SDK interfaces
 
 ---
