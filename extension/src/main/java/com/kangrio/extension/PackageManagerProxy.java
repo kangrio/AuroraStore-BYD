@@ -159,9 +159,22 @@ public class PackageManagerProxy extends Binder {
         }
 
         packageInfo = Utils.spoofSignature(packageInfo, signatureData);
+
+        /*
+          Error: Parcelable encountered ClassNotFoundException reading a Serializable object (name = com.google.android.gms.org.conscrypt.OpenSSLRSAPublicKey)
+          Fixed: provide only requested package info flags
+         */
+        PackageInfo spoofedPackageInfo = getPackageInfoInternal(pkg, (int) flags2);
+        if ((flags2 & PackageManager.GET_SIGNATURES) != 0) {
+            spoofedPackageInfo.signatures = packageInfo.signatures;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && (flags2 & PackageManager.GET_SIGNING_CERTIFICATES) != 0) {
+            spoofedPackageInfo.signingInfo = packageInfo.signingInfo;
+        }
+
         reply.writeNoException();
         reply.writeInt(1);
-        packageInfo.writeToParcel(reply, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+        spoofedPackageInfo.writeToParcel(reply, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
         reply.setDataPosition(0);
         return true;
     }
