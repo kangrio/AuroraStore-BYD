@@ -66,7 +66,11 @@ abstract class BuildExtensionTask : DefaultTask() {
     fun run() {
         fs.copy {
             from("build/intermediates/dex/release/minifyReleaseWithR8/classes.dex")
-            into("../app/src/main/res/raw")
+            into("../app/src/main/assets/patches/dex")
+        }
+        fs.copy {
+            from("build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out")
+            into("../app/src/main/assets/patches")
         }
     }
 }
@@ -76,9 +80,5 @@ tasks.register<BuildExtensionTask>("buildExtension") {
 }
 
 tasks.named<Delete>("clean") {
-    delete(
-        fileTree("../app/src/main/res/raw") {
-            include("*.dex")
-        }
-    )
+    delete("../app/src/main/assets/patches")
 }

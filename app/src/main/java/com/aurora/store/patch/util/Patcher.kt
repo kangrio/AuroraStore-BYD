@@ -75,6 +75,7 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         val patchedApk = File.createTempFile("patched_${System.currentTimeMillis()}", ".apk")
 
         try {
+            addNativeLibsToApk(apkModule)
             patchAndroidManifest(apkModule, getSignatureBase64(apkModule))
             addPatchedDexToApk(apkModule)
             replaceMicroGProfiles(apkModule)
@@ -125,7 +126,7 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
 
         application.newElement(AndroidManifest.TAG_meta_data).apply {
             createAndroidAttribute(null, android.R.attr.name).valueAsString = name
-            when(valueType) {
+            when (valueType) {
                 ValueType.BOOLEAN -> createAndroidAttribute(null, android.R.attr.value).valueAsBoolean = value as Boolean
                 ValueType.DEC -> createAndroidAttribute(null, android.R.attr.value).setValueAsDecimal(value as Int)
                 ValueType.HEX -> createAndroidAttribute(null, android.R.attr.value).setValueAsDecimal(value as Int)
@@ -169,7 +170,7 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         ).valueAsString = ConstantsPatch.PATCH_APP_COMPONENT_FACTORY_CLASS
         addMetaData(apkModule, ConstantsPatch.META_DATA_SPOOFED_CERTIFICATES, signatureData)
         addMetaData(apkModule, ConstantsPatch.META_DATA_PATCH_VERSION_CODE, BuildConfig.PATCH_VERSION_CODE, ValueType.DEC)
-        addMetaData(apkModule , ConstantsPatch.META_DATA_ENABLE_CRASH_REPORT, enabledCrashReport, ValueType.BOOLEAN)
+        addMetaData(apkModule, ConstantsPatch.META_DATA_ENABLE_CRASH_REPORT, enabledCrashReport, ValueType.BOOLEAN)
 
         // source https://github.com/microg/GmsCore/blob/master/play-services-core/src/huawei/AndroidManifest.xml
         if (apkModule.packageName == MICROG_PACKAGE_NAME) {
@@ -231,7 +232,7 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
     }
 
     fun addPatchedDexToApk(apkModule: ApkModule) {
-        val dexInputStream: InputStream = context.resources.openRawResource(R.raw.classes)
+        val dexInputStream: InputStream = context.assets.open("patches/dex/classes.dex")
         val dexBytes = dexInputStream.readBytes()
         dexInputStream.close()
 
@@ -241,6 +242,38 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         }.dex"
         val classesDex = ByteInputSource(dexBytes, classesDexName)
         apkModule.add(classesDex)
+    }
+
+    fun addNativeLibsToApk(apkModule: ApkModule) {
+        val assets = context.assets
+
+        fun listRecursive(path: String): List<String> {
+            return assets.list(path).orEmpty().flatMap { name ->
+                val child = "$path/$name"
+
+                if (assets.list(child).isNullOrEmpty()) {
+                    listOf(child)
+                } else {
+                    listRecursive(child)
+                }
+            }
+        }
+
+        val libFiles = listRecursive("patches/lib")
+
+        libFiles.forEach { name ->
+            assets.open(name).use { input ->
+                apkModule.add(
+                    ByteInputSource(input.readBytes(), name.replace("patches/", ""))
+                )
+            }
+        }
+
+        // extract native libs
+        val application = apkModule.androidManifest.applicationElement
+        application.getOrCreateAndroidAttribute(null, android.R.attr.extractNativeLibs).apply {
+            valueAsBoolean = true
+        }
     }
 
     fun replaceMicroGProfiles(apkModule: ApkModule) {

@@ -1,3 +1,7 @@
+Changelog: v1.0.3
+• feat: add native library patching
+• fix: fix Parcelable ClassNotFoundException, fixes #34, #35
+
 Changelog: v1.0.2
 • feat: add MicroG compatibility check
 • feat: add PackageManagerProxy
